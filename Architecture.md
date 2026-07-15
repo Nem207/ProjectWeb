@@ -71,4 +71,5 @@ Kiến trúc Client – Server kết hợp với mô hình MVC mang lại nhiề
 
 Nhờ áp dụng kiến trúc này, hệ thống có cấu trúc rõ ràng, dễ quản lý và đáp ứng tốt các yêu cầu phát triển cũng như mở rộng trong tương lai.
 
-https://chatgpt.com/backend-api/estuary/content?id=file_000000008d6c71faac1ca04bc7d6d70e&ts=495584&p=fs&cid=1&sig=8f5403afa4d77f162e7ff43ee6a6fdfa32bee5eff9b3184823d684b23d25070e&v=0
+<img width="368" height="247" alt="image" src="https://github.com/user-attachments/assets/fd9fde2c-84af-47aa-8d7e-a3e8dc81a5d8" />
+
