@@ -1,0 +1,37 @@
+Persona 2
+Persona 2 – Trần Hoàng Nam
+
+Trần Hoàng Nam là nhân viên Marketing, 28 tuổi, thường xuyên làm việc với máy tính trong môi trường văn phòng. Do tính chất công việc yêu cầu sự tập trung cao, Nam có thói quen nghe nhạc trong khi làm việc để giảm căng thẳng và nâng cao hiệu suất.
+
+Mục tiêu của Nam khi sử dụng hệ thống SoundWave là:
+
+Tạo các playlist phục vụ công việc.
+Được hệ thống gợi ý những bài hát phù hợp với tâm trạng và môi trường làm việc.
+Nghe nhạc liên tục mà không mất nhiều thời gian tìm kiếm.
+
+Tuy nhiên, Nam cũng gặp một số khó khăn khi sử dụng các nền tảng nghe nhạc hiện nay như:
+
+Mất nhiều thời gian để tìm kiếm những bài hát phù hợp.
+Playlist chưa được cá nhân hóa theo nhu cầu làm việc.
+Khó duy trì danh sách nhạc phù hợp với từng trạng thái làm việc hoặc tâm trạng.
+
+Từ Persona này, nhóm xác định hệ thống cần phát triển các chức năng hỗ trợ tạo playlist nhanh, gợi ý bài hát theo sở thích và hỗ trợ cá nhân hóa trải nghiệm nghe nhạc nhằm đáp ứng nhu cầu của người dùng là nhân viên văn phòng.
+
+User Scenario
+Kịch bản: Tạo Playlist làm việc
+
+Vào đầu giờ làm việc, Hoàng Nam mở website SoundWave và đăng nhập vào tài khoản cá nhân. Để chuẩn bị cho một buổi làm việc kéo dài, Nam sử dụng chức năng tìm kiếm với từ khóa Focus, Instrumental và Chill nhằm tìm các bài hát giúp tăng khả năng tập trung.
+
+Sau khi lựa chọn các bài hát phù hợp, Nam sử dụng chức năng Create Playlist để tạo một playlist mới có tên "Work Focus". Hệ thống lưu playlist vào thư viện cá nhân và đồng thời đề xuất thêm một số bài hát có phong cách tương tự dựa trên lịch sử nghe nhạc trước đó.
+
+Trong suốt quá trình làm việc, Nam chỉ cần mở playlist Work Focus để nghe nhạc mà không phải tìm kiếm lại từng bài hát. Nếu phát hiện một bài hát mới phù hợp, Nam có thể thêm trực tiếp vào playlist chỉ với vài thao tác.
+
+Kết quả đạt được
+
+Thông qua kịch bản trên, người dùng nhận được nhiều lợi ích:
+
+Tiết kiệm thời gian tìm kiếm bài hát trước mỗi buổi làm việc.
+Tạo và quản lý playlist theo từng mục đích sử dụng.
+Được hệ thống gợi ý thêm các bài hát phù hợp với sở thích.
+Duy trì không gian làm việc tập trung và hạn chế gián đoạn.
+Nâng cao trải nghiệm nghe nhạc nhờ khả năng cá nhân hóa của hệ thống.
