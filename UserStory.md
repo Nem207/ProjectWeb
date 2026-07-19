@@ -3,13 +3,13 @@ Hành trình người dùng (User Journey)
 
 User Journey mô tả toàn bộ quá trình người dùng tương tác với hệ thống để hoàn thành một mục tiêu cụ thể. Việc xây dựng User Journey giúp nhóm hiểu rõ các bước mà người dùng thực hiện, từ đó tối ưu giao diện, cải thiện trải nghiệm sử dụng và phát hiện những điểm cần nâng cấp trong hệ thống.
 
-Trong dự án SoundWave, nhóm lựa chọn hành trình "Nghe một bài hát yêu thích" để mô tả quá trình sử dụng hệ thống của người dùng.
+Trong dự án SpotifyClone, nhóm lựa chọn hành trình "Nghe một bài hát yêu thích" để mô tả quá trình sử dụng hệ thống của người dùng.
 
 Quy trình thực hiện
 
-Bước 1: Mở ứng dụng SoundWave
+Bước 1: Mở ứng dụng SpotifyClone
 
-Người dùng truy cập website SoundWave thông qua trình duyệt. Hệ thống hiển thị trang chủ với các chức năng như đăng nhập, tìm kiếm bài hát và khám phá nội dung.
+Người dùng truy cập website SpotifyClone thông qua trình duyệt. Hệ thống hiển thị trang chủ với các chức năng như đăng nhập, tìm kiếm bài hát và khám phá nội dung.
 
 Bước 2: Đăng nhập tài khoản
 
