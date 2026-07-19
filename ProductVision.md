@@ -1,4 +1,5 @@
 <img width="323" height="174" alt="image" src="https://github.com/user-attachments/assets/8cc5bf7a-99dd-4cdb-aacd-f39b261f3937" />
+
 Tầm nhìn sản phẩm (Product Vision)
 
 Product Vision giúp nhóm xác định rõ đối tượng người dùng, nhu cầu cần giải quyết, sản phẩm sẽ phát triển và giá trị khác biệt so với các sản phẩm hiện có trên thị trường. Đây là cơ sở để định hướng toàn bộ quá trình thiết kế và phát triển hệ thống.
