@@ -1,37 +1,40 @@
-Persona 2
-Persona 2 – Trần Hoàng Nam
+Persona 2 – Lê Quốc Huy (Quản trị viên)
 
-Trần Hoàng Nam là nhân viên Marketing, 28 tuổi, thường xuyên làm việc với máy tính trong môi trường văn phòng. Do tính chất công việc yêu cầu sự tập trung cao, Nam có thói quen nghe nhạc trong khi làm việc để giảm căng thẳng và nâng cao hiệu suất.
+Lê Quốc Huy là quản trị viên của hệ thống Spotify Clone, 30 tuổi, có kinh nghiệm quản lý các nền tảng web và cơ sở dữ liệu. Công việc hằng ngày của Huy là theo dõi hoạt động của hệ thống, quản lý người dùng, kiểm duyệt nội dung do nghệ sĩ đăng tải và đảm bảo nền tảng hoạt động ổn định.
 
-Mục tiêu của Nam khi sử dụng hệ thống SoundWave là:
+Mục tiêu của Huy khi sử dụng hệ thống Spotify Clone là:
 
-Tạo các playlist phục vụ công việc.
-Được hệ thống gợi ý những bài hát phù hợp với tâm trạng và môi trường làm việc.
-Nghe nhạc liên tục mà không mất nhiều thời gian tìm kiếm.
+Quản lý tài khoản người dùng và nghệ sĩ.
+Kiểm duyệt các bài hát trước khi được phát hành.
+Quản lý quảng cáo và các nội dung hiển thị trên hệ thống.
+Đảm bảo hệ thống hoạt động ổn định và an toàn.
 
-Tuy nhiên, Nam cũng gặp một số khó khăn khi sử dụng các nền tảng nghe nhạc hiện nay như:
+Tuy nhiên, Huy cũng gặp một số khó khăn trong quá trình quản lý như:
 
-Mất nhiều thời gian để tìm kiếm những bài hát phù hợp.
-Playlist chưa được cá nhân hóa theo nhu cầu làm việc.
-Khó duy trì danh sách nhạc phù hợp với từng trạng thái làm việc hoặc tâm trạng.
+Khó theo dõi số lượng lớn bài hát được tải lên mỗi ngày.
+Mất nhiều thời gian để kiểm tra và phê duyệt nội dung.
+Cần quản lý nhiều tài khoản người dùng và nghệ sĩ cùng lúc.
+Cần phát hiện và xử lý nhanh các nội dung không phù hợp.
 
-Từ Persona này, nhóm xác định hệ thống cần phát triển các chức năng hỗ trợ tạo playlist nhanh, gợi ý bài hát theo sở thích và hỗ trợ cá nhân hóa trải nghiệm nghe nhạc nhằm đáp ứng nhu cầu của người dùng là nhân viên văn phòng.
+Từ Persona này, nhóm xác định hệ thống cần xây dựng các chức năng quản trị như quản lý người dùng, quản lý nghệ sĩ, kiểm duyệt bài hát và quản lý quảng cáo nhằm hỗ trợ Admin vận hành hệ thống hiệu quả.
 
 User Scenario
-Kịch bản: Tạo Playlist làm việc
+Kịch bản: Kiểm duyệt bài hát mới
 
-Vào đầu giờ làm việc, Hoàng Nam mở website SoundWave và đăng nhập vào tài khoản cá nhân. Để chuẩn bị cho một buổi làm việc kéo dài, Nam sử dụng chức năng tìm kiếm với từ khóa Focus, Instrumental và Chill nhằm tìm các bài hát giúp tăng khả năng tập trung.
+Trong quá trình quản lý hệ thống, Huy đăng nhập bằng tài khoản Admin và truy cập vào trang Quản lý bài hát.
 
-Sau khi lựa chọn các bài hát phù hợp, Nam sử dụng chức năng Create Playlist để tạo một playlist mới có tên "Work Focus". Hệ thống lưu playlist vào thư viện cá nhân và đồng thời đề xuất thêm một số bài hát có phong cách tương tự dựa trên lịch sử nghe nhạc trước đó.
+Tại đây, hệ thống hiển thị danh sách các bài hát do nghệ sĩ mới tải lên với trạng thái Pending. Huy kiểm tra thông tin bài hát, bao gồm tên bài hát, nghệ sĩ, album, thể loại và tệp âm thanh.
 
-Trong suốt quá trình làm việc, Nam chỉ cần mở playlist Work Focus để nghe nhạc mà không phải tìm kiếm lại từng bài hát. Nếu phát hiện một bài hát mới phù hợp, Nam có thể thêm trực tiếp vào playlist chỉ với vài thao tác.
+Sau khi đánh giá nội dung, Huy lựa chọn Approve để phê duyệt hoặc Reject nếu bài hát không đáp ứng yêu cầu. Đối với các bài hát bị từ chối, Admin có thể nhập lý do để nghệ sĩ biết và chỉnh sửa trước khi gửi lại.
+
+Sau khi được phê duyệt, bài hát sẽ được cập nhật sang trạng thái Approved và xuất hiện trên hệ thống để người dùng có thể tìm kiếm và nghe trực tuyến.
 
 Kết quả đạt được
 
-Thông qua kịch bản trên, người dùng nhận được nhiều lợi ích:
+Thông qua kịch bản trên, quản trị viên nhận được nhiều lợi ích:
 
-Tiết kiệm thời gian tìm kiếm bài hát trước mỗi buổi làm việc.
-Tạo và quản lý playlist theo từng mục đích sử dụng.
-Được hệ thống gợi ý thêm các bài hát phù hợp với sở thích.
-Duy trì không gian làm việc tập trung và hạn chế gián đoạn.
-Nâng cao trải nghiệm nghe nhạc nhờ khả năng cá nhân hóa của hệ thống.
+Quản lý và kiểm duyệt bài hát một cách tập trung.
+Đảm bảo chỉ những nội dung đạt yêu cầu mới được phát hành.
+Giảm thời gian xử lý nhờ giao diện quản lý trực quan.
+Quản lý hiệu quả tài khoản người dùng và nghệ sĩ.
+Nâng cao chất lượng nội dung và duy trì sự ổn định của hệ thống.
