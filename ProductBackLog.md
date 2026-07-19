@@ -1,4 +1,4 @@
-Trong dự án SoundWave, Product Backlog được chia thành ba mức ưu tiên:
+Trong dự án SpotifyClone, Product Backlog được chia thành ba mức ưu tiên:
 
 High: Chức năng cốt lõi, bắt buộc phải hoàn thành trong phiên bản đầu tiên của hệ thống.
 Medium: Chức năng quan trọng, được triển khai sau khi hoàn thành các chức năng cốt lõi.
