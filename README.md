@@ -75,8 +75,10 @@ AI Agent: ChatGPT, CLAUDE hoặc công cụ tương đương.
 AI Feature: API mô hình ngôn ngữ hoặc SDK phù hợp
 
 CẤU TRÚC THƯ MỤC DỰ ÁN
+## 6. Cấu trúc repository
+
+```text
 SpotifyClone/
-│
 ├── Controllers/          # Xử lý request và điều hướng
 ├── Models/               # Các model dữ liệu
 ├── Views/                # Giao diện người dùng
@@ -85,11 +87,11 @@ SpotifyClone/
 │   ├── js/               # File JavaScript
 │   ├── images/           # Hình ảnh
 │   └── uploads/          # File nhạc và ảnh upload
-│
 ├── Data/                 # DbContext và Entity Framework
-├── Services/             # Business Logic, AI Service
+├── Services/             # Business Logic và AI Service
 ├── Migrations/           # Migration cơ sở dữ liệu
 ├── appsettings.json      # Cấu hình hệ thống
 ├── Program.cs            # Điểm khởi động ứng dụng
 └── README.md
+```
 
