@@ -75,8 +75,6 @@ AI Agent: ChatGPT, CLAUDE hoặc công cụ tương đương.
 AI Feature: API mô hình ngôn ngữ hoặc SDK phù hợp
 
 CẤU TRÚC THƯ MỤC DỰ ÁN
-## 6. Cấu trúc repository
-
 ```text
 SpotifyClone/
 ├── Controllers/          # Xử lý request và điều hướng
