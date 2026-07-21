@@ -1,4 +1,4 @@
-Tuần 7 (Kỳ nghỉ hè): Thống nhất công nghệ và điều chỉnh kế hoạch thực hiện
+(Kỳ nghỉ hè): Thống nhất công nghệ và điều chỉnh kế hoạch thực hiện
 
 Trong thời gian nghỉ hè, mặc dù không có lịch học trên lớp, nhóm vẫn chủ động tổ chức một buổi họp trực tuyến vào đầu tuần nhằm rà soát tiến độ dự án và thống nhất các công nghệ sẽ sử dụng để phát triển sản phẩm. Sau khi thảo luận, nhóm quyết định lựa chọn ASP.NET Core MVC làm framework chính cho dự án. Phần Back-end được xây dựng bằng ngôn ngữ C#, trong khi Front-end sử dụng Razor View (HTML nhúng C#) kết hợp với CSS và JavaScript để xây dựng giao diện và xử lý các tương tác với người dùng.
 
