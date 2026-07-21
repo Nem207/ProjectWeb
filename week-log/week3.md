@@ -1,1 +1,11 @@
-a
+Tuần 3: Xác định yêu cầu và lập kế hoạch phát triển sản phẩm
+
+Sau quá trình thảo luận và cân nhắc nhiều ý tưởng ở tuần trước, nhóm chính thức thống nhất lựa chọn SpotifyClone làm chủ đề phát triển cho dự án. Nhóm nhận thấy đây là sản phẩm có phạm vi phù hợp với thời gian thực hiện, đồng thời tạo cơ hội áp dụng nhiều kiến thức đã học về phân tích yêu cầu, thiết kế hệ thống và phát triển phần mềm.
+
+Sau khi chốt chủ đề, nhóm bắt đầu xây dựng Product Vision nhằm xác định mục tiêu và định hướng của sản phẩm. Nhóm thống nhất phát triển một nền tảng nghe nhạc trực tuyến cho phép người dùng tìm kiếm, phát nhạc, quản lý playlist và khám phá các bài hát, album cũng như nghệ sĩ yêu thích. Product Vision đóng vai trò là kim chỉ nam, giúp các thành viên thống nhất về mục tiêu và phạm vi của dự án trong suốt quá trình phát triển.
+
+Tiếp theo, nhóm tiến hành xác định các Scenario mô tả cách người dùng tương tác với hệ thống trong các tình huống thực tế như đăng nhập, tìm kiếm bài hát, phát nhạc, tạo playlist và lưu bài hát yêu thích. Từ các scenario này, nhóm xây dựng các User Stories theo góc nhìn của từng vai trò người dùng (User, Artist và Admin), giúp mô tả rõ nhu cầu của từng đối tượng sử dụng hệ thống. Theo nội dung môn học, scenario và user story là cơ sở quan trọng để hiểu nhu cầu của người dùng và chuyển đổi các yêu cầu đó thành các chức năng cụ thể của phần mềm.
+
+Dựa trên các User Stories đã xây dựng, nhóm tiến hành lập Product Backlog, bao gồm danh sách các công việc và chức năng cần được phát triển trong dự án. Đồng thời, nhóm xác định Feature List với các chức năng cốt lõi như đăng ký và đăng nhập tài khoản, phát nhạc, tìm kiếm bài hát, quản lý playlist, quản lý album, quản lý nghệ sĩ, đề xuất bài hát và phân quyền người dùng. Việc xác định rõ các feature ngay từ đầu giúp nhóm có kế hoạch triển khai hợp lý và tránh bổ sung các chức năng không cần thiết trong quá trình phát triển.
+
+Kết thúc tuần thứ ba, nhóm đã hoàn thành việc xác định định hướng sản phẩm, xây dựng Product Vision, Scenario, User Stories, Product Backlog và danh sách các tính năng chính của hệ thống. Đây là nền tảng quan trọng để nhóm bắt đầu thiết kế giao diện và triển khai các chức năng của SpotifyClone trong các tuần tiếp theo.
