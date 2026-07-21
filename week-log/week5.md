@@ -1,0 +1,11 @@
+Tuần 5: Hoàn thiện giao diện và thiết kế cơ sở dữ liệu
+
+Trong tuần thứ năm, nhóm tiếp tục phát triển giao diện người dùng cho dự án SpotifyClone. Dựa trên bản thiết kế đã thống nhất ở tuần trước, các thành viên hoàn thiện thêm nhiều trang và thành phần giao diện như trang đăng nhập, đăng ký, trang danh sách bài hát, thông tin album, hồ sơ nghệ sĩ và các thành phần điều hướng chung của hệ thống. Quá trình xây dựng giao diện được thực hiện đồng thời giữa các thành viên nhằm đảm bảo tính thống nhất về bố cục, màu sắc và trải nghiệm người dùng.
+
+Song song với việc phát triển giao diện, nhóm bắt đầu phân tích và thiết kế cơ sở dữ liệu (Database) cho hệ thống. Nhóm tổ chức các buổi họp để xác định những thực thể chính của ứng dụng như User, Artist, Song, Album, Playlist, Genre và các bảng lưu trữ thông tin liên quan. Đồng thời, nhóm thảo luận về mối quan hệ giữa các bảng, xác định khóa chính, khóa ngoại và các ràng buộc dữ liệu nhằm đảm bảo tính nhất quán và thuận tiện cho việc truy vấn sau này.
+
+Trong quá trình thiết kế, nhóm luôn hướng tới việc xây dựng một mô hình dữ liệu có khả năng mở rộng, đáp ứng nhu cầu lưu trữ và quản lý dữ liệu của nhiều người dùng. Mặc dù phiên bản hiện tại chỉ phục vụ cho mục đích học tập, nhóm vẫn tham khảo mô hình của các ứng dụng Software as a Service (SaaS), trong đó dữ liệu được tổ chức khoa học để hỗ trợ việc quản lý, cập nhật và mở rộng hệ thống trong tương lai. Theo nội dung môn học, việc lựa chọn kiến trúc dữ liệu phù hợp là một trong những quyết định quan trọng khi phát triển các hệ thống phần mềm trên nền tảng đám mây.
+
+Bên cạnh đó, nhóm cũng xem xét các yêu cầu về phân quyền và bảo mật dữ liệu ngay từ giai đoạn thiết kế cơ sở dữ liệu. Các bảng được xây dựng theo từng vai trò của hệ thống như User, Artist và Admin, tạo nền tảng cho việc kiểm soát quyền truy cập và phát triển các chức năng nghiệp vụ ở những giai đoạn tiếp theo. Điều này phù hợp với nguyên tắc thiết kế hệ thống có khả năng mở rộng và đảm bảo an toàn dữ liệu được đề cập trong chương học về phần mềm trên nền tảng đám mây.
+
+Kết thúc tuần thứ năm, nhóm đã hoàn thiện phần lớn giao diện của hệ thống và xây dựng được mô hình cơ sở dữ liệu ban đầu với các thực thể và mối quan hệ chính. Đây là cơ sở để nhóm bắt đầu kết nối giữa giao diện, cơ sở dữ liệu và các chức năng nghiệp vụ trong các tuần tiếp theo.
