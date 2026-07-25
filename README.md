@@ -77,18 +77,18 @@ AI Feature: API mô hình ngôn ngữ hoặc SDK phù hợp
 CẤU TRÚC THƯ MỤC DỰ ÁN
 ```text
 SpotifyClone/
-├── Controllers/          # Xử lý request và điều hướng
+├── features/
+│   ├── controller/              # tiếp nhận request từ người dùng, gọi services chạy logic và trả ra view
+│   ├── services/               # file logic 
+│   ├── viewmodels/           # những thông tin mà ta muốn cho người dùng thấy
 ├── Models/               # Các model dữ liệu
 ├── Views/                # Giao diện người dùng
 ├── wwwroot/
 │   ├── css/              # File CSS
 │   ├── js/               # File JavaScript
 │   ├── images/           # Hình ảnh
-│   └── uploads/          # File nhạc và ảnh upload
 ├── Data/                 # DbContext và Entity Framework
-├── Services/             # Business Logic và AI Service
 ├── appsettings.json      # Cấu hình hệ thống
 ├── Program.cs            # Điểm khởi động ứng dụng
-└── README.md
 ```
 
