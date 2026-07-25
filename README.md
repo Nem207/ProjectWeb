@@ -87,7 +87,6 @@ SpotifyClone/
 │   └── uploads/          # File nhạc và ảnh upload
 ├── Data/                 # DbContext và Entity Framework
 ├── Services/             # Business Logic và AI Service
-├── Migrations/           # Migration cơ sở dữ liệu
 ├── appsettings.json      # Cấu hình hệ thống
 ├── Program.cs            # Điểm khởi động ứng dụng
 └── README.md
