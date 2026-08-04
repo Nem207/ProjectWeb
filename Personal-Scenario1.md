@@ -26,7 +26,7 @@ Sau khi xây dựng Persona, nhóm tiếp tục mô tả một User Scenario nh�
 
 Kịch bản: Tạo Playlist học tập
 
-Minh Anh đang chuẩn bị cho kỳ thi cuối kỳ và muốn có một danh sách nhạc giúp tập trung khi học. Sau khi đăng nhập vào hệ thống SoundWave, Minh Anh sử dụng chức năng tìm kiếm để lựa chọn các bài hát thể loại Lo-fi phù hợp.
+Minh Anh đang chuẩn bị cho kỳ thi cuối kỳ và muốn có một danh sách nhạc giúp tập trung khi học. Sau khi đăng nhập vào hệ thống SpotifyClone, Minh Anh sử dụng chức năng tìm kiếm để lựa chọn các bài hát thể loại Lo-fi phù hợp.
 
 Tiếp theo, Minh Anh chọn chức năng Create Playlist, đặt tên playlist là "Study Music", sau đó thêm các bài hát yêu thích vào danh sách và lưu lại.
 
