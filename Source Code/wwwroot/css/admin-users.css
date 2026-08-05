@@ -1,0 +1,145 @@
+﻿namespace SpotifyClone.wwwroot.css
+:root {
+    --spotify-green: #1DB954;
+    --spotify-black: #121212;
+    --surface: #1E1E1E;
+    --surface-hover: #2A2A2A;
+    --border: #333333;
+    --text-primary: #FFFFFF;
+    --text-muted: #A0A0A0;
+    --danger: #E84040;
+    --danger-hover: #C03030;
+}
+.admin-users-container {
+    padding: 32px;
+    background: var(--spotify-black);
+    min-height: 100vh;
+    font-family: 'Circular', 'Helvetica Neue', sans-serif;
+}
+.admin-users-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.admin-users-title {
+    color: var(--text-primary);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+.admin-users-count {
+    color: var(--text-muted);
+    font-size: 14px;
+    background: var(--surface);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    color: var(--text-primary);
+}
+    .users-table thead {
+        background: #252525;
+    }
+    .users-table th {
+        padding: 14px 18px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+    }
+    .users-table tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+    }
+        .users-table tbody tr:last-child {
+            border-bottom: none;
+        }
+        .users-table tbody tr:hover {
+            background: var(--surface-hover);
+        }
+    .users-table td {
+        padding: 14px 18px;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+.td-id {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: monospace;
+}
+.avatar-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+.avatar-placeholder {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--spotify-green);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-premium {
+    background: rgba(29, 185, 84, 0.15);
+    color: var(--spotify-green);
+    border: 1px solid rgba(29, 185, 84, 0.4);
+}
+.badge-free {
+    background: rgba(160, 160, 160, 0.1);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+.td-date {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+    .btn-delete:hover {
+        background: var(--danger);
+        color: #fff;
+    }
+.empty-state {
+    text-align: center;
+    padding: 60px;
+    color: var(--text-muted);
+}
