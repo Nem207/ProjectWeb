@@ -1,0 +1,33 @@
+.report-reason-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: var(--space-md);
+}
+.report-reason-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-highlight);
+    cursor: pointer;
+    font-size: 14px;
+}
+    .report-reason-option:hover {
+        background: #2e2e2e;
+    }
+    .report-reason-option input {
+        accent-color: var(--color-primary);
+    }
+.report-song-btn {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+}
+#reportSongTitle {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-md);
+}
