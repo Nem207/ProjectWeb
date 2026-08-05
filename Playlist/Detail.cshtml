@@ -1,0 +1,171 @@
+﻿@model SpotifyClone.Features.Playlist.ViewModels.PlaylistDetailVM
+@{
+    ViewData["Title"] = "Playlist";
+}
+<div id="viewPlaylistDetail" data-playlist-id="@Model.Playlist.PlaylistID">
+    <div class="pl-header">
+        <div class="pl-cover">
+            <img id="plCoverImg"
+                 src="/images/default-cover.png"
+                 alt="Playlist cover"
+                 onerror="this.onerror=null;this.src='/images/default-cover.png'">
+        </div>
+        <div class="pl-header-content">
+            <div class="pl-type">
+                Danh sách phát
+            </div>
+            <div class="pl-title-row">
+                <h1 class="pl-name"
+                    id="plName">
+                </h1>
+            </div>
+            <p class="pl-description"
+               id="plDescription"
+               style="display:none;">
+            </p>
+            <div class="pl-meta">
+                <span id="plOwner">
+                    --
+                </span>
+                <span class="dot">
+                    •
+                </span>
+                <span id="plSongCount">
+                    0 bài hát
+                </span>
+                <span class="dot">
+                    •
+                </span>
+                <span id="plDuration">
+                    0 phút
+                </span>
+                <span class="dot">
+                    •
+                </span>
+                <span id="plCreatedAt">
+                    --
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="pl-action-bar">
+        <button class="pl-play-btn"
+                id="plActionPlayBtn"
+                title="Phát">
+            ▶
+        </button>
+        <button class="pl-icon-btn"
+                id="btnAddSong"
+                onclick="Playlist.openAddSongModal()">
+            + Thêm bài hát
+        </button>
+        <button class="pl-icon-btn"
+                id="btnEditPlaylist"
+                onclick="Playlist.openEditModal()">
+            ✏ Chỉnh sửa
+        </button>
+        <button class="pl-icon-btn pl-danger"
+                id="btnDeletePlaylist"
+                onclick="Playlist.deletePlaylist()">
+            🗑 Xóa playlist
+        </button>
+    </div>
+    <div class="pl-section">
+        <div class="pl-table-head">
+            <div class="pl-col-idx">
+                #
+            </div>
+            <div class="pl-col-title">
+                Tiêu đề
+            </div>
+            <div class="pl-col-album">
+                Album
+            </div>
+            <div class="pl-col-duration">
+                ⏱
+            </div>
+            <div class="pl-col-action"></div>
+        </div>
+        <div id="plSongList">
+            <div class="pl-empty"
+                 id="plEmptyState">
+                Playlist này chưa có bài hát nào.
+                Nhấn "Thêm bài hát" để bắt đầu.
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay"
+     id="modalAddSong">
+    <div class="modal-box"
+         style="max-width:560px;">
+        <h2 class="modal-title">
+            Thêm bài hát vào playlist
+        </h2>
+        <div class="form-group">
+            <input class="form-input"
+                   type="text"
+                   id="addSongSearchInput"
+                   placeholder="Tìm bài hát..."
+                   oninput="Playlist.searchAvailableSongs(this.value)" />
+        </div>
+        <div class="pl-genre-chips" id="genreChipRow"></div>
+        <div class="pl-add-song-list"
+             id="addSongResults">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary"
+                    onclick="Playlist.closeAddSongModal()">
+                Đóng
+            </button>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay"
+     id="modalEditPlaylist">
+    <div class="modal-box"
+         style="max-width:520px;">
+        <h2 class="modal-title">
+            Chỉnh sửa playlist
+        </h2>
+        <div class="form-group">
+            <label class="form-label">
+                Ảnh playlist
+            </label>
+            <input id="editCover"
+                   class="form-input"
+                   placeholder="https://...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">
+                Tên playlist
+            </label>
+            <input id="editName"
+                   class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">
+                Mô tả
+            </label>
+            <textarea id="editDescription"
+                      class="form-textarea"
+                      rows="4">
+            </textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary"
+                    onclick="Playlist.closeEditModal()">
+                Hủy
+            </button>
+            <button class="btn btn-primary"
+                    onclick="Playlist.saveEdit()">
+                Xong
+            </button>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        Playlist.loadDetail(@Model.Playlist.PlaylistID);
+    </script>
+}
