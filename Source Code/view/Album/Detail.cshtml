@@ -1,0 +1,197 @@
+﻿@using System.Text.Encodings.Web
+@model SpotifyClone.Features.Album.ViewModels.AlbumDetailVM
+@{
+    ViewData["Title"] = Model.AlbumName;
+    var totalMin = Model.TotalDurationSeconds / 60;
+    var totalSec = Model.TotalDurationSeconds % 60;
+    var durationText = totalMin > 0 ? $"{totalMin} phút {totalSec} giây" : $"{totalSec} giây";
+    var yearText = Model.ReleaseDate?.Year.ToString() ?? "--";
+}
+<div id="viewAlbumDetail"
+     data-album-id="@Model.AlbumID"
+     data-album-name="@Model.AlbumName"
+     data-artist-id="@Model.MainArtistID">
+    <div class="album-header">
+        <div class="album-cover">
+            <img src="@(string.IsNullOrEmpty(Model.CoverImage) ? "/images/default-cover.png" : Model.CoverImage)" alt="@Model.AlbumName" onerror="this.onerror=null;this.src='/images/default-cover.png'">
+        </div>
+        <div class="album-header-content">
+            <div class="album-type">@(Model.AlbumType ?? "Album")</div>
+            <h1 class="album-name">@Model.AlbumName</h1>
+            <div class="album-meta">
+                @if (Model.MainArtistID != 0)
+                {
+                    <img class="artist-avatar-mini" src="@(string.IsNullOrEmpty(Model.MainArtistAvatar) ? "/images/default-cover.png" : Model.MainArtistAvatar)" alt="@Model.MainArtistName" onerror="this.onerror=null;this.src='/images/default-cover.png'">
+                    <a href="/Artist/Detail/@Model.MainArtistID" class="artist-meta-link">@Model.MainArtistName</a>
+                    <span class="dot">•</span>
+                }
+                <span>@yearText</span>
+                <span class="dot">•</span>
+                <span>@Model.Songs.Count bài hát, @durationText</span>
+            </div>
+        </div>
+    </div>
+    <div class="action-bar">
+        <button class="play-btn" id="btnAlbumPlay" title="Phát">▶</button>
+        <button class="icon-btn-circle" id="btnAddLibrary" title="Thêm vào danh sách phát">+</button>
+        <div class="more-wrap">
+            <button class="icon-btn" id="btnAlbumMore">•••</button>
+            <div class="more-menu" id="albumMoreMenu">
+                <button id="menuShareAlbum">Chia sẻ</button>
+                <button id="menuReportAlbum">Báo cáo</button>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="song-table-head">
+            <div class="col-idx">#</div>
+            <div class="col-title">Tiêu đề</div>
+            <div class="col-duration">
+                <span class="clock-icon">⏱</span>
+                <span class="head-divider">|</span>
+                <button class="view-toggle-btn" id="btnViewToggle">▼</button>
+                <div class="view-toggle-menu" id="viewToggleMenu">
+                    <div class="view-toggle-label">Xem dưới dạng</div>
+                    <button data-mode="compact" id="btnModeCompact">☰ Rút gọn</button>
+                    <button data-mode="list" id="btnModeList" class="active">☰ Danh sách <span class="check">✓</span></button>
+                </div>
+            </div>
+        </div>
+        <div id="albumSongs">
+            @if (Model.Songs.Any())
+            {
+                int index = 1;
+                foreach (var song in Model.Songs)
+                {
+                    var artistLinksHtml = string.Join(", ", song.Artists.Select(a =>
+                        $"<a href=\"/Artist/Detail/{a.ArtistID}\" onclick=\"event.stopPropagation();\">{HtmlEncoder.Default.Encode(a.ArtistName)}</a>"));
+                    if (string.IsNullOrEmpty(artistLinksHtml)) { artistLinksHtml = "<span style=\"color:var(--color-text-muted, #a7a7a7);\">Đang cập nhật</span>"; }
+                    var firstArtist = song.Artists.FirstOrDefault()?.ArtistName ?? "Nghệ sĩ ẩn danh";
+                    var mins = song.Duration / 60;
+                    var secs = song.Duration % 60;
+                    var songJson = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        songId = song.SongID,
+                        title = song.Title,
+                        audioUrl = song.AudioURL ?? "",
+                        durationInSeconds = song.Duration,
+                        coverImageUrl = song.CoverImage ?? "",
+                        artistName = firstArtist
+                    });
+                    <div class="song-row" data-song-id="@song.SongID" data-song="@songJson">
+                        <div class="col-idx">
+                            <span class="num">@index</span>
+                            <span class="play-mini" onclick="event.stopPropagation();">▶</span>
+                        </div>
+                        <div class="col-title">
+                            <a class="song-title" href="/Song/Detail/@song.SongID" onclick="event.stopPropagation();">@song.Title</a>
+                            <span class="song-artists" onclick="event.stopPropagation();">@Html.Raw(artistLinksHtml)</span>
+                        </div>
+                        <div class="col-duration">
+                            <div class="row-actions" onclick="event.stopPropagation();">
+                                <button class="row-add-btn" title="Thêm vào playlist" data-song-id="@song.SongID">+</button>
+                                <div class="song-more-wrap">
+                                    <button class="row-more-btn" title="Tuỳ chọn khác">•••</button>
+                                    <div class="more-menu row-more-menu">
+                                        <button class="row-menu-like" id="likeToggle-@song.SongID">♡ Thêm vào Bài hát đã thích</button>
+                                        @{
+                                            var otherArtists = song.Artists.Where(a => a.ArtistID != Model.MainArtistID).ToList();
+                                        }
+                                        @if (otherArtists.Any())
+                                        {
+                                            <div class="submenu-wrap">
+                                                <button class="submenu-trigger">👤 Chuyển tới nghệ sĩ ▸</button>
+                                                <div class="submenu">
+                                                    @foreach (var oa in otherArtists)
+                                                    {
+                                                        <button onclick="location.href='/Artist/Detail/@oa.ArtistID'">@oa.ArtistName</button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                        <button class="row-menu-credits">Xem thông tin ghi công</button>
+                                        <button class="row-menu-share">Chia sẻ</button>
+                                        <button class="report-song-btn" data-report-song-id="@song.SongID" data-report-song-title="@song.Title">⚑ Báo cáo bài hát</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="duration-text">@($"{mins}:{secs:D2}")</span>
+                        </div>
+                    </div>
+                    index++;
+                }
+            }
+            else
+            {
+                <div class="empty-text">Album này chưa có bài hát nào.</div>
+            }
+        </div>
+        <div class="album-footer-info">
+            <div>@(Model.ReleaseDate?.ToString("d 'tháng' M, yyyy") ?? "")</div>
+            <div>&copy; @yearText @Model.MainArtistName</div>
+            <div>&#8471; @yearText @Model.MainArtistName</div>
+        </div>
+    </div>
+    @if (Model.OtherAlbums.Any())
+    {
+        <div class="section">
+            <div class="section-head">
+                <h2>Album khác của @Model.MainArtistName</h2>
+                <a href="/Artist/Detail/@Model.MainArtistID" class="see-all">Xem danh sách đĩa nhạc</a>
+            </div>
+            <div class="other-albums-grid">
+                @foreach (var other in Model.OtherAlbums)
+                {
+                    <div class="album-card" onclick="location.href='/Album/Detail/@other.AlbumID'">
+                        <img src="@(string.IsNullOrEmpty(other.CoverImage) ? "/images/default-cover.png" : other.CoverImage)" alt="@other.AlbumName" onerror="this.onerror=null;this.src='/images/default-cover.png'">
+                        <div class="album-title">@other.AlbumName</div>
+                        <div class="album-meta-small">@(other.ReleaseDate?.Year.ToString() ?? "--") • @(other.AlbumType ?? "Đang cập nhật")</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+<div class="report-overlay" id="creditsOverlay">
+    <div class="report-modal">
+        <h3>Thông tin ghi công</h3>
+        <p id="creditsSongTitle" style="color:#fff;font-weight:600;font-size:15px;"></p>
+        <div id="creditsList" style="display:flex;flex-direction:column;gap:8px;margin:12px 0 18px;"></div>
+        <div class="report-actions">
+            <button type="button" id="btnCreditsClose" class="report-btn-cancel">Đóng</button>
+        </div>
+    </div>
+</div>
+<div class="report-overlay" id="reportOverlay">
+    <div class="report-modal">
+        <h3>Báo cáo album</h3>
+        <p>Vui lòng cho chúng tôi biết lý do bạn báo cáo <strong id="reportAlbumName">@Model.AlbumName</strong>.</p>
+        <div class="report-reasons" id="reportReasons">
+            <label><input type="radio" name="reportReason" value="Nội dung không phù hợp"> Nội dung không phù hợp</label>
+            <label><input type="radio" name="reportReason" value="Vi phạm bản quyền"> Vi phạm bản quyền</label>
+            <label><input type="radio" name="reportReason" value="Giả mạo nghệ sĩ"> Giả mạo nghệ sĩ</label>
+            <label><input type="radio" name="reportReason" value="Spam hoặc lừa đảo"> Spam hoặc lừa đảo</label>
+            <label><input type="radio" name="reportReason" value="Khác"> Khác</label>
+        </div>
+        <textarea id="reportDetail" placeholder="Mô tả chi tiết (không bắt buộc)..." rows="3"></textarea>
+        <div class="report-actions">
+            <button type="button" id="btnReportCancel" class="report-btn-cancel">Hủy</button>
+            <button type="button" id="btnReportSubmit" class="report-btn-submit">Gửi báo cáo</button>
+        </div>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/album.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script>
+        window.ALBUM_MAIN_ARTIST_ID = @Model.MainArtistID;
+        window.SONGS_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.Songs.ToDictionary(
+                    s => s.SongID,
+                    s => new { title = s.Title, artists = s.Artists.Select(a => new { id = a.ArtistID, name = a.ArtistName }) }
+                    )
+                    ));
+    </script>
+    <script src="~/js/album.js"></script>
+}
