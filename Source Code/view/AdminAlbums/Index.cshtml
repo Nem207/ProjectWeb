@@ -1,0 +1,103 @@
+﻿@model List<SpotifyClone.Features.AdminAlbums.ViewModels.AlbumsViewModel>
+@{
+    ViewData["Title"] = "Albums";
+    ViewData["PageSub"] = "Quản lý danh sách album trong hệ thống.";
+    ViewData["ActiveMenu"] = "albums";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/admin-albums.css" />
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Tổng album</div>
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-sub">Trong hệ thống</div>
+        </div>
+        <div class="stat-icon green"><i class="ti ti-vinyl"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Nghệ sĩ có album</div>
+            <div class="stat-value">@Model.SelectMany(a => a.ArtistIDs).Distinct().Count()</div>
+            <div class="stat-sub">Nghệ sĩ khác nhau</div>
+        </div>
+        <div class="stat-icon blue"><i class="ti ti-microphone-2"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Phát hành gần nhất</div>
+            <div class="stat-value">
+                @(Model.Any(a => a.ReleaseDate.HasValue)
+                    ? Model.Where(a => a.ReleaseDate.HasValue).Max(a => a.ReleaseDate!.Value).ToString("dd/MM/yyyy")
+                    : "--")
+            </div>
+            <div class="stat-sub">Ngày phát hành mới nhất</div>
+        </div>
+        <div class="stat-icon orange"><i class="ti ti-calendar"></i></div>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên album..." />
+    </div>
+</div>
+<div class="table-card">
+    <table class="data-table" id="albumsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên album</th>
+                <th>Nghệ sĩ</th>
+                <th>Ngày phát hành</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="albumsBody">
+            @foreach (var album in Model)
+            {
+                <tr id="album-row-@album.AlbumID" data-title="@album.AlbumTitle?.ToLower()">
+                    <td class="cell-id">#@album.AlbumID</td>
+                    <td>
+                        <div class="cell-name">
+                            <div class="name-avatar">
+                                @(album.AlbumTitle?.Substring(0, 1).ToUpper() ?? "?")
+                            </div>
+                            <div>
+                                <div class="name-main">@album.AlbumTitle</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="cell-muted">@(album.ArtistName ?? "Không rõ")</td>
+                    <td class="cell-muted">@(album.ReleaseDate?.ToString("dd/MM/yyyy") ?? "--")</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn-icon danger" title="Xóa"
+                                    onclick="deleteAlbum(@album.AlbumID, '@album.AlbumTitle')">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="ti ti-disc-off"></i>
+            <p>Chưa có album nào trong hệ thống.</p>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script src="~/js/admin-albums.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('#albumsBody tr').forEach(row => {
+        row.style.display = row.dataset.title?.includes(q) ? '' : 'none';
+        });
+        });
+    </script>
+}

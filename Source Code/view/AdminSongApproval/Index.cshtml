@@ -1,0 +1,158 @@
+﻿@using SpotifyClone.Helpers
+@model List<SpotifyClone.Features.AdminSongApproval.ViewModels.SongApprovalViewModel>
+@{
+    ViewData["Title"] = "Duyệt bài hát";
+    ViewData["PageSub"] = "Duyệt các bài hát Artist gửi lên.";
+    ViewData["ActiveMenu"] = "songApproval";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Đang chờ duyệt</div>
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-sub">Bài hát cần xử lý</div>
+        </div>
+        <div class="stat-icon orange"><i class="ti ti-clock"></i></div>
+    </div>
+</div>
+<div class="table-card">
+    <table class="data-table" id="songApprovalTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên bài hát</th>
+                <th>Nghệ sĩ</th>
+                <th>Album</th>
+                <th>Thời lượng</th>
+                <th>Loại</th>
+                <th>Ngày gửi</th>
+                <th>Xem trước</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="songApprovalBody">
+            @foreach (var song in Model)
+            {
+                <tr id="song-row-@song.SongID">
+                    <td>#@song.SongID</td>
+                    <td>@song.Title</td>
+                    <td>@song.ArtistName</td>
+                    <td>@(song.AlbumTitle ?? "--")</td>
+                    <td>@DurationFormatter.ToMinutesSeconds(song.Duration)</td>
+                    <td>
+                        @if (song.IsPremium)
+                        {
+                            <span class="badge" style="background:#1ed760;color:#000;font-weight:700;">PREMIUM</span>
+                        }
+                        else
+                        {
+                            <span class="badge" style="background:#2a2a2a;color:#a7a7a7;">Free</span>
+                        }
+                    </td>
+                    <td>@song.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <button class="btn-icon"
+                                title="Xem URL artist đã nhập trước khi duyệt"
+                                data-audio-url="@song.AudioURL"
+                                data-cover-url="@song.CoverImage"
+                                onclick="togglePreview(@song.SongID, this)">
+                            <i class="ti ti-eye"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn-icon success" title="Duyệt" onclick="approveSong(@song.SongID)">
+                                <i class="ti ti-check"></i>
+                            </button>
+                            <button class="btn-icon danger" title="Từ chối" onclick="rejectSong(@song.SongID)">
+                                <i class="ti ti-x"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr id="preview-row-@song.SongID" class="preview-row" style="display:none;">
+                    <td colspan="9">
+                        <div class="preview-panel">
+                            <div class="preview-field">
+                                <strong>Link nhạc (artist nhập):</strong>
+                                <code class="preview-url" id="preview-audio-text-@song.SongID"></code>
+                                <a href="#" target="_blank" rel="noopener noreferrer nofollow"
+                                   id="preview-audio-link-@song.SongID" class="preview-open-link">Mở trong tab mới ↗</a>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(song.CoverImage))
+                            {
+                                <div class="preview-field">
+                                    <strong>Link ảnh bìa (artist nhập):</strong>
+                                    <code class="preview-url" id="preview-cover-text-@song.SongID"></code>
+                                    <a href="#" target="_blank" rel="noopener noreferrer nofollow"
+                                       id="preview-cover-link-@song.SongID" class="preview-open-link">Mở trong tab mới ↗</a>
+                                </div>
+                            }
+                            <p class="preview-warning">
+                                ⚠ Link do Artist tự nhập, chưa được server kiểm duyệt nội dung.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="ti ti-music-off"></i>
+            <p>Không có bài hát nào đang chờ duyệt.</p>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script>
+        async function approveSong(id) {
+            if (!confirm("Bạn chắc chắn muốn duyệt bài hát này?")) return;
+            const res = await fetch(`/AdminSongApproval/Approve/${id}`, { method: "POST" });
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById(`song-row-${id}`).remove();
+                document.getElementById(`preview-row-${id}`)?.remove();
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        }
+        async function rejectSong(id) {
+            const reason = prompt("Nhập lý do từ chối:");
+            if (!reason) return;
+            const res = await fetch(`/AdminSongApproval/Reject/${id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ reason: reason })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById(`song-row-${id}`).remove();
+                document.getElementById(`preview-row-${id}`)?.remove();
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        }
+        function togglePreview(id, btn) {
+            const row = document.getElementById(`preview-row-${id}`);
+            if (!row) return;
+            const isOpening = row.style.display === "none";
+            row.style.display = isOpening ? "table-row" : "none";
+            if (!isOpening) return;
+            const audioUrl = btn.dataset.audioUrl || "";
+            const coverUrl = btn.dataset.coverUrl || "";
+            const audioText = document.getElementById(`preview-audio-text-${id}`);
+            const audioLink = document.getElementById(`preview-audio-link-${id}`);
+            if (audioText) audioText.textContent = audioUrl || "(trống)";
+            if (audioLink) audioLink.href = audioUrl || "#";
+            const coverText = document.getElementById(`preview-cover-text-${id}`);
+            const coverLink = document.getElementById(`preview-cover-link-${id}`);
+            if (coverText) coverText.textContent = coverUrl || "(trống)";
+            if (coverLink) coverLink.href = coverUrl || "#";
+        }
+    </script>
+}

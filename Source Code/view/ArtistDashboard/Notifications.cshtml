@@ -1,0 +1,47 @@
+﻿@model List<SpotifyClone.Features.ArtistDashboard.ViewModels.ArtistNotificationItem>
+@{
+    ViewData["Title"] = "Thông báo";
+    ViewData["ActiveMenu"] = "notifications";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/artist-notifications.css" />
+}
+<div class="card">
+    <h2 class="card-title">Thông báo duyệt bài hát</h2>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            var isApproved = item.Status == "Approved";
+            <div class="notif-item">
+                <div class="notif-icon @(isApproved ? "approved" : "rejected")">
+                    <i class="ti @(isApproved ? "ti-check" : "ti-x")"></i>
+                </div>
+                <div>
+                    <div class="notif-text">
+                        Bài hát <strong>"@item.Title"</strong> đã được
+                        @if (isApproved)
+                        {
+                            <span style="color:var(--accent);font-weight:600;">duyệt</span>
+                        }
+                        else
+                        {
+                            <span style="color:#dc3545;font-weight:600;">từ chối</span>
+                        }
+                    </div>
+                    @if (!isApproved && !string.IsNullOrEmpty(item.RejectReason))
+                    {
+                        <div class="notif-text" style="color:var(--text-muted);margin-top:2px;">
+                            Lý do: @item.RejectReason
+                        </div>
+                    }
+                    <div class="notif-time">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">Chưa có thông báo nào.</div>
+    }
+</div>

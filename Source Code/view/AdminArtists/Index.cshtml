@@ -1,0 +1,122 @@
+﻿@model List<SpotifyClone.Features.AdminArtists.ViewModels.ArtistsViewModel>
+@{
+    ViewData["Title"] = "Nghệ sĩ";
+    ViewData["PageSub"] = "Quản lý danh sách nghệ sĩ trong hệ thống.";
+    ViewData["ActiveMenu"] = "artists";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/admin-artists.css" />
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Tổng nghệ sĩ</div>
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-sub">Trong hệ thống</div>
+        </div>
+        <div class="stat-icon green"><i class="ti ti-microphone-2"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Thêm hôm nay</div>
+            <div class="stat-value">@Model.Count(a => a.CreatedAt.Date == DateTime.Today)</div>
+            <div class="stat-sub">Nghệ sĩ mới</div>
+        </div>
+        <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Mới nhất</div>
+            <div class="stat-value">
+                @(Model.Any() ? Model.Max(a => a.CreatedAt).ToString("dd/MM") : "--")
+            </div>
+            <div class="stat-sub">Ngày tạo gần nhất</div>
+        </div>
+        <div class="stat-icon orange"><i class="ti ti-clock"></i></div>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên nghệ sĩ..." />
+    </div>
+</div>
+<div class="table-card">
+    <table class="data-table" id="artistsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên nghệ sĩ</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="artistsBody">
+            @foreach (var artist in Model)
+            {
+                <tr id="artist-row-@artist.ArtistID" data-name="@artist.ArtistName?.ToLower()">
+                    <td class="cell-id">#@artist.ArtistID</td>
+                    <td>
+                        <div class="cell-name">
+                            <div class="name-avatar">
+                                @(artist.ArtistName?.Substring(0, 1).ToUpper() ?? "?")
+                            </div>
+                            <div>
+                                <div class="name-main">@artist.ArtistName</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="status-cell-@artist.ArtistID">
+                        @if (artist.IsBlocked)
+                        {
+                            <span class="badge" style="background:#e5484d33;color:#e5484d;">Đã chặn</span>
+                        }
+                        else
+                        {
+                            <span class="badge" style="background:#1db95433;color:#1db954;">Bình thường</span>
+                        }
+                    </td>
+                    <td class="cell-muted">
+                        @artist.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+                    <td>
+                        <div class="action-group" id="actions-@artist.ArtistID">
+                            @if (artist.IsBlocked)
+                            {
+                                <button class="btn-icon success" title="Bỏ chặn"
+                                        onclick="unblockArtist(@artist.ArtistID, '@artist.ArtistName')">
+                                    <i class="ti ti-lock-open"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn-icon danger" title="Chặn"
+                                        onclick="blockArtist(@artist.ArtistID, '@artist.ArtistName')">
+                                    <i class="ti ti-lock"></i>
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="ti ti-microphone-off"></i>
+            <p>Chưa có nghệ sĩ nào trong hệ thống.</p>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script src="~/js/admin-artists.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+                document.querySelectorAll('#artistsBody tr').forEach(row => {
+                row.style.display = row.dataset.name?.includes(q) ? '' : 'none';
+                });
+                });
+    </script>
+}

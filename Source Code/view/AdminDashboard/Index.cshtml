@@ -1,0 +1,105 @@
+﻿@model SpotifyClone.Features.AdminDashBoard.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["PageSub"] = "Tổng quan hệ thống & thống kê.";
+    ViewData["ActiveMenu"] = "dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/admin-dashboard.css" />
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Người dùng</div>
+            <div class="stat-value">@Model.TotalUsers.ToString("N0")</div>
+            <div class="stat-sub">Tổng số tài khoản</div>
+        </div>
+        <div class="stat-icon green"><i class="ti ti-users"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Bài hát</div>
+            <div class="stat-value">@Model.TotalSongs.ToString("N0")</div>
+            <div class="stat-sub">Trong hệ thống</div>
+        </div>
+        <div class="stat-icon blue"><i class="ti ti-music"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Nghệ sĩ</div>
+            <div class="stat-value">@Model.TotalArtists.ToString("N0")</div>
+            <div class="stat-sub">Đang hoạt động</div>
+        </div>
+        <div class="stat-icon orange"><i class="ti ti-microphone-2"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Lượt nghe</div>
+            <div class="stat-value">@Model.TotalStreams.ToString("N0")</div>
+            <div class="stat-sub">Tổng lượt stream</div>
+        </div>
+        <div class="stat-icon green"><i class="ti ti-headphones"></i></div>
+    </div>
+</div>
+<div class="chart-grid">
+    <div class="table-card chart-wide">
+        <h3 class="section-title">Xu hướng lượt nghe (7 ngày gần nhất)</h3>
+        <canvas id="streamTrendChart"></canvas>
+    </div>
+    <div class="table-card">
+        <h3 class="section-title">Phân loại theo thể loại</h3>
+        <canvas id="genreChart"></canvas>
+    </div>
+</div>
+<div class="table-card">
+    <h3 class="section-title">Top 10 bài hát nổi bật</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Bài hát</th>
+                <th>Nghệ sĩ</th>
+                <th>Lượt nghe</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.TopTracks.Count; i++)
+            {
+                var track = Model.TopTracks[i];
+                <tr>
+                    <td class="cell-id">#@(i + 1)</td>
+                    <td>
+                        <div class="cell-name">
+                            <div class="name-avatar">
+                                @(track.Title?.Substring(0, 1).ToUpper() ?? "?")
+                            </div>
+                            <div>
+                                <div class="name-main">@track.Title</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="cell-muted">@track.ArtistName</td>
+                    <td class="cell-muted">@track.StreamCount.ToString("N0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.TopTracks.Any())
+    {
+        <div class="empty-state">
+            <i class="ti ti-disc-off"></i>
+            <p>Chưa có dữ liệu lượt nghe nào trong hệ thống.</p>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const dashboardData = {
+        trendLabels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StreamTrend.Select(t => t.Label))),
+        trendValues: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StreamTrend.Select(t => t.TotalPlays))),
+        genreLabels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.GenreDistribution.Select(g => g.GenreName))),
+        genreValues: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.GenreDistribution.Select(g => g.SongCount)))
+        };
+    </script>
+    <script src="~/js/admin-dashboard.js"></script>
+}

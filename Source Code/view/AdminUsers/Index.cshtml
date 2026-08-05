@@ -1,0 +1,109 @@
+﻿@model List<SpotifyClone.Features.AdminUsers.ViewModels.UsersViewModel>
+@{
+    ViewData["Title"] = "Người dùng";
+    ViewData["PageSub"] = "Quản lý hồ sơ người dùng trong hệ thống.";
+    ViewData["ActiveMenu"] = "users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/admin-users.css" />
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Tổng (lọc)</div>
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-sub">Trang hiện tại</div>
+        </div>
+        <div class="stat-icon green"><i class="ti ti-users"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Premium</div>
+            <div class="stat-value">@Model.Count(u => u.IsPremium)</div>
+            <div class="stat-sub">Trang hiện tại</div>
+        </div>
+        <div class="stat-icon purple"><i class="ti ti-crown"></i></div>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên người dùng..." />
+    </div>
+    <select class="filter-select" id="filterPremium">
+        <option value="">Tất cả loại</option>
+        <option value="true">Premium</option>
+        <option value="false">Free</option>
+    </select>
+</div>
+<div class="table-card">
+    <table class="data-table" id="usersTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Người dùng</th>
+                <th>Loại tài khoản</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="usersBody">
+            @foreach (var user in Model)
+            {
+                <tr id="user-row-@user.UserID"
+                    data-name="@user.UserName?.ToLower()"
+                    data-premium="@user.IsPremium.ToString().ToLower()">
+                    <td class="cell-id">#@user.UserID</td>
+                    <td>
+                        <div class="cell-name">
+                            <div class="name-main">@user.UserName</div>
+                        </div>
+                    </td>
+                    <td>
+                        @if (user.IsPremium)
+                        {
+                            <span class="badge badge-green">
+                                <i class="ti ti-crown" style="font-size:11px"></i> Premium
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-gray">Free</span>
+                        }
+                    </td>
+                    <td class="cell-muted">@user.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn-icon danger" title="Xóa"
+                                    onclick="deleteUser(@user.UserID, '@user.UserName')">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="ti ti-users-off"></i>
+            <p>Chưa có người dùng nào.</p>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script src="~/js/admin-users.js"></script>
+    <script>
+        function applyFilter() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        const premium = document.getElementById('filterPremium').value.toLowerCase();
+        document.querySelectorAll('#usersBody tr').forEach(row => {
+        const nameMatch = !q || row.dataset.name?.includes(q);
+        const premiumMatch = !premium || row.dataset.premium === premium;
+        row.style.display = nameMatch && premiumMatch ? '' : 'none';
+        });
+        }
+        document.getElementById('searchInput').addEventListener('input', applyFilter);
+        document.getElementById('filterPremium').addEventListener('change', applyFilter);
+    </script>
+}

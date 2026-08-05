@@ -1,0 +1,139 @@
+﻿@model List<SpotifyClone.Features.AdminSongs.ViewModels.SongsViewModel>
+@{
+    ViewData["Title"] = "Bài hát";
+    ViewData["PageSub"] = "Quản lý danh sách bài hát trong hệ thống.";
+    ViewData["ActiveMenu"] = "songs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/admin-songs.css" />
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Tổng bài hát</div>
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-sub">Trong hệ thống</div>
+        </div>
+        <div class="stat-icon green"><i class="ti ti-music"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Thêm hôm nay</div>
+            <div class="stat-value">@Model.Count(s => s.CreatedAt.Date == DateTime.Today)</div>
+            <div class="stat-sub">Bài hát mới</div>
+        </div>
+        <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Thời lượng TB</div>
+            <div class="stat-value">
+                @(Model.Any() ? TimeSpan.FromSeconds((int)Model.Average(s => s.Duration)).ToString(@"mm\:ss") : "00:00")
+            </div>
+            <div class="stat-sub">Phút:Giây</div>
+        </div>
+        <div class="stat-icon orange"><i class="ti ti-clock"></i></div>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên bài hát..." />
+    </div>
+</div>
+<div class="table-card">
+    <table class="data-table" id="songsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên bài hát</th>
+                <th>Nghệ sĩ</th>
+                <th>Thời lượng</th>
+                <th>Gói</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="songsBody">
+            @foreach (var song in Model)
+            {
+                <tr id="song-row-@song.SongID" data-title="@song.Title?.ToLower()">
+                    <td class="cell-id">#@song.SongID</td>
+                    <td>
+                        <div class="cell-name">
+                            <div class="name-avatar">
+                                @(song.Title?.Substring(0, 1).ToUpper() ?? "?")
+                            </div>
+                            <div>
+                                <div class="name-main">@song.Title</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="cell-muted">@song.ArtistName</td>
+                    <td class="cell-muted">
+                        @(TimeSpan.FromSeconds(song.Duration).ToString(@"mm\:ss"))
+                    </td>
+                    <td>
+                        @if (song.IsPremium)
+                        {
+                            <span class="badge" style="background:#1ed760;color:#000;font-weight:700;">PREMIUM</span>
+                        }
+                        else
+                        {
+                            <span class="badge" style="background:#2a2a2a;color:#a7a7a7;">Free</span>
+                        }
+                    </td>
+                    <td id="status-cell-@song.SongID">
+                        @if (song.Status == "Blocked")
+                        {
+                            <span class="badge" style="background:#e5484d33;color:#e5484d;">Đã chặn</span>
+                        }
+                        else
+                        {
+                            <span class="badge" style="background:#1db95433;color:#1db954;">Bình thường</span>
+                        }
+                    </td>
+                    <td class="cell-muted">
+                        @song.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+                    <td>
+                        <div class="action-group" id="actions-@song.SongID">
+                            @if (song.Status == "Blocked")
+                            {
+                                <button class="btn-icon success" title="Bỏ chặn"
+                                        onclick="unblockSong(@song.SongID, '@song.Title')">
+                                    <i class="ti ti-lock-open"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn-icon danger" title="Chặn"
+                                        onclick="blockSong(@song.SongID, '@song.Title')">
+                                    <i class="ti ti-lock"></i>
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="ti ti-music-off"></i>
+            <p>Chưa có bài hát nào trong hệ thống.</p>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script src="~/js/admin-songs.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#songsBody tr').forEach(row => {
+                row.style.display = row.dataset.title?.includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}

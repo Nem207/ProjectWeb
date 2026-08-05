@@ -1,0 +1,98 @@
+﻿@model List<SpotifyClone.Features.ArtistReports.ViewModels.ArtistReportListItemVM>
+@{
+    ViewData["Title"] = "Báo cáo nghệ sĩ";
+    ViewData["PageSub"] = "Danh sách báo cáo từ người dùng về nghệ sĩ.";
+    ViewData["ActiveMenu"] = "artistReports";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var currentStatus = ViewData["CurrentStatus"] as string ?? "";
+}
+<link rel="stylesheet" href="~/css/admin-songs.css" />
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Đang chờ xử lý</div>
+            <div class="stat-value">@Model.Count(r => r.Status == "Pending")</div>
+            <div class="stat-sub">Cần admin xem xét</div>
+        </div>
+        <div class="stat-icon orange"><i class="ti ti-flag"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-left">
+            <div class="stat-label">Tổng báo cáo</div>
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-sub">Từ trước tới nay</div>
+        </div>
+        <div class="stat-icon blue"><i class="ti ti-list-details"></i></div>
+    </div>
+</div>
+<div class="table-card">
+    <div style="display:flex;gap:8px;padding:16px 16px 0;">
+        <a asp-action="Index" class="btn-icon @(currentStatus == "" ? "success" : "")" style="width:auto;padding:6px 14px;">Tất cả</a>
+        <a asp-action="Index" asp-route-status="Pending" class="btn-icon @(currentStatus == "Pending" ? "success" : "")" style="width:auto;padding:6px 14px;">Đang chờ</a>
+        <a asp-action="Index" asp-route-status="Reviewed" class="btn-icon @(currentStatus == "Reviewed" ? "success" : "")" style="width:auto;padding:6px 14px;">Đã xử lý</a>
+        <a asp-action="Index" asp-route-status="Dismissed" class="btn-icon @(currentStatus == "Dismissed" ? "success" : "")" style="width:auto;padding:6px 14px;">Đã bỏ qua</a>
+    </div>
+    <table class="data-table" id="artistReportsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nghệ sĩ</th>
+                <th>Người báo cáo</th>
+                <th>Lý do</th>
+                <th>Ghi chú</th>
+                <th>Thời gian</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="artistReportsBody">
+            @foreach (var r in Model)
+            {
+                <tr id="report-row-@r.ReportID">
+                    <td>#@r.ReportID</td>
+                    <td>
+                        <a href="/Artist/Detail/@r.ArtistID" target="_blank">@r.ArtistName</a>
+                    </td>
+                    <td>@r.ReporterName</td>
+                    <td>@r.Reason</td>
+                    <td style="max-width:220px;white-space:normal;">@(r.Description ?? "--")</td>
+                    <td>@r.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <span class="badge-status status-@r.Status.ToLower()">@ArtistReportStatusLabel(r.Status)</span>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            @if (r.Status == "Pending")
+                            {
+                                <button class="btn-icon success" title="Đánh dấu đã xử lý" onclick="resolveReport(@r.ReportID, 'Reviewed')">
+                                    <i class="ti ti-check"></i>
+                                </button>
+                                <button class="btn-icon danger" title="Bỏ qua" onclick="resolveReport(@r.ReportID, 'Dismissed')">
+                                    <i class="ti ti-x"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <span style="color:var(--color-text-muted, #a7a7a7);font-size:13px;">Đã xử lý</span>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="8" style="text-align:center;color:var(--color-text-muted,#a7a7a7);">Chưa có báo cáo nào.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/js/admin-artist-reports.js" asp-append-version="true"></script>
+@functions {
+    string ArtistReportStatusLabel(string status) => status switch
+    {
+        "Pending" => "Đang chờ",
+        "Reviewed" => "Đã xử lý",
+        "Dismissed" => "Đã bỏ qua",
+        _ => status
+    };
+}
