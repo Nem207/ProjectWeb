@@ -1,0 +1,15 @@
+﻿@model bool
+@{
+}
+@if (Model)
+{
+    <a class="btn-premium" id="btnPremium" asp-controller="Premium" asp-action="Subscription">
+        Quản lý Premium
+    </a>
+}
+else
+{
+    <a class="btn-premium" id="btnPremium" asp-controller="Premium" asp-action="Index">
+        Nâng cấp lên Premium
+    </a>
+}

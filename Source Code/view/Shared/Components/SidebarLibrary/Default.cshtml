@@ -1,0 +1,48 @@
+﻿@model SpotifyClone.Features.Playlists.ViewComponents.SidebarLibraryVM
+@{
+    var defaultCover = "/images/default-cover.png";
+}
+@if (Model.Playlists.Count == 0 && Model.FollowedArtists.Count == 0)
+{
+    <div class="empty-state" style="padding: 24px 16px;">
+        <p style="font-size:13px; text-align:center; color: var(--color-text-muted);">Tạo playlist đầu tiên của bạn!</p>
+    </div>
+}
+else
+{
+    @foreach (var p in Model.Playlists)
+    {
+        var isFavorites = p.PlaylistName == "Bài hát yêu thích";
+        <a class="library-item" data-type="playlist" href="/Playlist/Detail/@p.PlaylistID">
+            @if (isFavorites)
+            {
+                <div class="library-item-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#450af5,#c4efd9);font-size:18px;">💚</div>
+            }
+            else
+            {
+                <img class="library-item-img" src="@(string.IsNullOrWhiteSpace(p.CoverImage) ? defaultCover : p.CoverImage)" onerror="this.onerror=null;this.src='@defaultCover'" alt="@p.PlaylistName">
+            }
+            <div class="library-item-info">
+                <div class="library-item-name">@p.PlaylistName</div>
+                @if (isFavorites)
+                {
+                    <div class="library-item-meta">@p.SongCount bài hát</div>
+                }
+                else
+                {
+                    <div class="library-item-meta">Playlist &bull; @p.SongCount bài hát</div>
+                }
+            </div>
+        </a>
+    }
+    @foreach (var a in Model.FollowedArtists)
+    {
+        <a class="library-item" data-type="artist" id="sidebarArtist-@a.ArtistID" href="/Artist/Detail/@a.ArtistID">
+            <img class="library-item-img" src="@(string.IsNullOrWhiteSpace(a.Avatar) ? defaultCover : a.Avatar)" onerror="this.onerror=null;this.src='@defaultCover'" alt="@a.ArtistName" style="border-radius:50%;">
+            <div class="library-item-info">
+                <div class="library-item-name">@a.ArtistName</div>
+                <div class="library-item-meta">Nghệ sĩ</div>
+            </div>
+        </a>
+    }
+}

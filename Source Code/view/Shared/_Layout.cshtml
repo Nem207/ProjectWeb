@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Spotify Clone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/responsive.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/playlist.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ads.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/toast.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/report.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="app-layout" id="app">
+        <partial name="_Sidebar" />
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+        <main class="main-content" id="mainContent">
+            <partial name="_Header" />
+            @RenderBody()
+        </main>
+        <partial name="_Footer" />
+    </div>
+    <div class="modal-overlay" id="modalCreatePlaylist">
+        <div class="modal-box">
+            <h2 class="modal-title">Tạo playlist mới</h2>
+            <div class="form-group">
+                <label class="form-label" for="playlistNameInput">Tên playlist</label>
+                <input class="form-input" type="text" id="playlistNameInput" placeholder="Playlist của tôi #1" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="UI.closeCreatePlaylist()">Huỷ</button>
+                <button class="btn btn-primary" onclick="Playlist.createPlaylist()">Tạo</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalAddToPlaylist">
+        <div class="modal-box" style="max-width:400px;">
+            <h2 class="modal-title">Thêm vào playlist</h2>
+            <input class="form-input" type="text" id="plPickerSearchInput" placeholder="Tìm playlist..." autocomplete="off" style="margin-bottom:var(--space-sm);" />
+            <div class="pl-add-song-list" id="addToPlaylistList">
+                <div class="pl-empty">Đang tải...</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="PlaylistPicker.close()">Đóng</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalLyrics">
+        <div class="modal-box" style="max-width:560px;max-height:70vh;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);">
+                <div>
+                    <h2 class="modal-title" style="margin-bottom:4px;" id="lyricsSongTitle">Lời bài hát</h2>
+                    <p style="font-size:13px;color:var(--color-text-secondary);" id="lyricsSongArtist"></p>
+                </div>
+                <button class="control-btn" onclick="Player.closeLyrics()" title="Đóng">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                </button>
+            </div>
+            <div id="lyricsContent" style="overflow-y:auto;white-space:pre-line;line-height:1.8;color:var(--color-text-secondary);">
+                Chưa có bài hát nào đang phát.
+            </div>
+        </div>
+    </div>
+    <script>
+            window.IS_AUTHENTICATED = @Json.Serialize(User?.Identity?.IsAuthenticated == true);
+    </script>
+    <script src="~/js/toast.js" asp-append-version="true"></script>
+    <script src="~/js/report.js" asp-append-version="true"></script>
+    <script src="~/js/player.js" asp-append-version="true"></script>
+    <script src="~/js/ui.js" asp-append-version="true"></script>
+    <script src="~/js/search.js" asp-append-version="true"></script>
+    <script src="~/js/home.js" asp-append-version="true"></script>
+    <script src="~/js/playlist.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Artist Panel</title>
+    <link rel="stylesheet" href="~/css/artist-layout.css" />
+    @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+</head>
+<body>
+    <div class="artist-shell">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Mở menu">
+            <i class="ti ti-menu-2"></i>
+        </button>
+        <aside class="artist-sidebar" id="artistSidebar">
+            <div class="brand">
+                <img src="~/image/SpotifyLogo.png" class="brand-logo" alt="Spotify Logo" />
+                <span>Artist Panel</span>
+            </div>
+            <nav class="nav-group">
+                <div class="nav-label">Tổng quan</div>
+                <a asp-controller="ArtistDashboard" asp-action="Index"
+                   class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "dashboard" ? "active" : "")">
+                    <i class="ti ti-layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="nav-label">Sáng tạo</div>
+                <a asp-controller="ArtistDashboard" asp-action="UploadSong"
+                   class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "upload" ? "active" : "")">
+                    <i class="ti ti-upload"></i>
+                    <span>Đăng bài</span>
+                </a>
+                <div class="nav-label">Hệ thống</div>
+                <a asp-controller="ArtistDashboard" asp-action="Notifications"
+                   class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "notifications" ? "active" : "")">
+                    <i class="ti ti-bell"></i>
+                    <span>Thông báo</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="avatar">@(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "A")</div>
+                <div>
+                    <div class="user-name">@User.Identity?.Name</div>
+                    <div class="user-role">Nghệ sĩ</div>
+                </div>
+            </div>
+        </aside>
+        <div class="artist-overlay" id="artistOverlay"></div>
+        <main class="artist-main">
+            <header class="artist-header">
+                <div>
+                    <h1>@ViewData["Title"]</h1>
+                    <p>@ViewData["PageSub"]</p>
+                </div>
+                <form asp-controller="Auth" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-logout">Đăng xuất</button>
+                </form>
+            </header>
+            <section class="artist-content">
+                @RenderBody()
+            </section>
+        </main>
+    </div>
+    <script src="~/js/artist-layout.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

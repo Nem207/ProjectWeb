@@ -1,0 +1,105 @@
+﻿@{
+    var activeMenu = ViewData["ActiveMenu"] as string ?? "";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Spotify Admin</title>
+    <link rel="icon" type="image/png" href="~/image/SpotifyLogo.png" />
+    <link rel="stylesheet" href="https://unpkg.com/@@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <link rel="stylesheet" href="~/css/admin-toast.css" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="~/image/SpotifyLogo.png" class="brand-logo" alt="Spotify Logo" />
+                <span class="brand-text">Admin Panel</span>
+            </div>
+            <div class="nav-section-label">Tổng quan</div>
+            <div class="nav-group">
+                <a asp-controller="AdminDashboard" asp-action="Index"
+                   class="nav-item @(activeMenu == "dashboard" ? "active" : "")">
+                    <i class="ti ti-layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+            <div class="nav-section-label">Quản lý nội dung</div>
+            <div class="nav-group">
+                <a asp-controller="AdminArtists" asp-action="Index"
+                   class="nav-item @(activeMenu == "artists" ? "active" : "")">
+                    <i class="ti ti-microphone-2"></i>
+                    <span>Nghệ sĩ</span>
+                </a>
+                <a asp-controller="AdminUsers" asp-action="Index"
+                   class="nav-item @(activeMenu == "users" ? "active" : "")">
+                    <i class="ti ti-users"></i>
+                    <span>Người dùng</span>
+                </a>
+                <a asp-controller="AdminSongs" asp-action="Index"
+                   class="nav-item @(activeMenu == "songs" ? "active" : "")">
+                    <i class="ti ti-music"></i>
+                    <span>Bài hát</span>
+                </a>
+                <a asp-controller="AdminAlbums" asp-action="Index"
+                   class="nav-item @(activeMenu == "albums" ? "active" : "")">
+                    <i class="ti ti-disc"></i>
+                    <span>Album</span>
+                </a>
+            </div>
+            <div class="nav-section-label">Hệ thống</div>
+            <div class="nav-group">
+                <a asp-controller="AdminSongApproval" asp-action="Index"
+                   class="nav-item @(activeMenu == "songApproval" ? "active" : "")">
+                    <i class="ti ti-clock"></i>
+                    <span>Duyệt bài hát</span>
+                </a>
+                <a asp-controller="AdminSongReports" asp-action="Index"
+                   class="nav-item @(activeMenu == "songReports" ? "active" : "")">
+                    <i class="ti ti-flag"></i>
+                    <span>Báo cáo bài hát</span>
+                </a>
+                <a asp-controller="AdminArtistReports" asp-action="Index"
+                   class="nav-item @(activeMenu == "artistReports" ? "active" : "")">
+                    <i class="ti ti-flag-2"></i>
+                    <span>Báo cáo nghệ sĩ</span>
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar">A</div>
+                    <div class="user-info">
+                        <span class="user-name">Admin</span>
+                        <span class="user-role">Quản trị viên</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="main">
+            <header class="topbar">
+                <div>
+                    <div class="page-title">@ViewData["Title"]</div>
+                    <div class="page-sub">@ViewData["PageSub"]</div>
+                </div>
+                <div class="topbar-right">
+                    <span class="role-chip">ADMIN</span>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" style="margin:0;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-logout">Đăng xuất</button>
+                    </form>
+                </div>
+            </header>
+            <main class="content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <div id="toast-container" class="toast-container"></div>
+    <script src="~/js/admin-toast.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
