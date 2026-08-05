@@ -1,0 +1,179 @@
+﻿@using System.Text.Encodings.Web
+@model SpotifyClone.Features.Artist.ViewModels.ArtistDetailVM
+@{
+    ViewData["Title"] = Model.ArtistName;
+    var heroImage = string.IsNullOrEmpty(Model.CoverImage) ? Model.Avatar : Model.CoverImage;
+    var bio = string.IsNullOrWhiteSpace(Model.Bio) ? "Nghệ sĩ này chưa cập nhật tiểu sử." : Model.Bio;
+}
+<div id="viewArtistDetail"
+     data-artist-id="@Model.ArtistID"
+     data-artist-name="@Model.ArtistName"
+     data-artist-avatar="@Model.Avatar">
+    <div class="artist-header" style="background-image:@(string.IsNullOrEmpty(heroImage) ? "none" : $"url('{heroImage}')");">
+        <div class="overlay"></div>
+        <div class="artist-header-content">
+            <div class="verified"><span class="badge">✓</span> Do Spotify xác minh</div>
+            <h1 class="artist-name">@Model.ArtistName</h1>
+            <div class="listeners" id="monthlyListeners">@Model.MonthlyListeners.ToString("N0") người nghe hằng tháng</div>
+        </div>
+    </div>
+    <div class="action-bar">
+        <button class="play-btn" id="btnArtistPlay" title="Phát">▶</button>
+        <button class="follow-btn" id="btnFollow">Theo dõi</button>
+        <button class="icon-btn blocked-icon-btn" id="btnUnblock" title="Bỏ chặn nghệ sĩ" style="display:none;">🚫</button>
+        <div class="more-wrap">
+            <button class="icon-btn" id="btnArtistMore">•••</button>
+            <div class="more-menu" id="artistMoreMenu">
+                <button id="menuBlockArtist">Không phát nghệ sĩ này</button>
+                <button id="menuReport">Báo cáo</button>
+                <button id="menuShare">Chia sẻ</button>
+            </div>
+        </div>
+    </div>
+    <div class="empty-text" id="blockedNotice" style="display:none;padding:0 0 8px;">Bạn đã chặn nghệ sĩ này. Bấm 🚫 để bỏ chặn.</div>
+    <div class="section">
+        <h2>Phổ biến</h2>
+        <div id="popularSongs">
+            @if (Model.PopularSongs.Any())
+            {
+                int index = 1;
+                foreach (var song in Model.PopularSongs)
+                {
+                    var artistLinksHtml = string.Join(", ", song.Artists.Select(a =>
+                        $"<a href=\"/Artist/Detail/{a.ArtistID}\" onclick=\"event.stopPropagation();\">{HtmlEncoder.Default.Encode(a.ArtistName)}</a>"));
+                    if (string.IsNullOrEmpty(artistLinksHtml)) { artistLinksHtml = "<span style=\"color:var(--color-text-muted, #a7a7a7);\">Đang cập nhật</span>"; }
+                    var firstArtist = song.Artists.FirstOrDefault()?.ArtistName ?? "Nghệ sĩ ẩn danh";
+                    var mins = song.Duration / 60;
+                    var secs = song.Duration % 60;
+                    var songJson = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        songId = song.SongID,
+                        title = song.Title,
+                        audioUrl = song.AudioURL ?? "",
+                        durationInSeconds = song.Duration,
+                        coverImageUrl = song.CoverImage ?? "",
+                        artistName = firstArtist
+                    });
+                    <div class="song-row" data-song-id="@song.SongID" data-song="@songJson">
+                        <div class="idx">
+                            <span class="num">@index</span>
+                            <span class="play-mini" onclick="event.stopPropagation();">▶</span>
+                        </div>
+                        <div class="song-title-wrap">
+                            <img src="@(string.IsNullOrEmpty(song.CoverImage) ? "/images/default-cover.png" : song.CoverImage)" alt="@song.Title" onerror="this.onerror=null;this.src='/images/default-cover.png'">
+                            <div class="titles">
+                                <a class="title" href="/Song/Detail/@song.SongID" onclick="event.stopPropagation();">@song.Title</a>
+                                <span class="song-artists" onclick="event.stopPropagation();">@Html.Raw(artistLinksHtml)</span>
+                            </div>
+                        </div>
+                        <div class="plays">@song.TotalPlays.ToString("N0")</div>
+                        <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;" onclick="event.stopPropagation();">
+                            <div class="row-actions">
+                                <button title="Thêm vào playlist" onclick="ArtistDetail.addToPlaylist(@song.SongID, '@Html.Raw(JavaScriptEncoder.Default.Encode(song.Title))')">＋</button>
+                                <div class="song-more-wrap" style="position:relative;">
+                                    <button title="Tuỳ chọn khác" onclick="ArtistDetail.toggleSongMenu(event, @song.SongID)">•••</button>
+                                    <div class="more-menu song-menu" id="songMenu-@song.SongID">
+                                        <button onclick="ArtistDetail.addToPlaylist(@song.SongID, '@Html.Raw(JavaScriptEncoder.Default.Encode(song.Title))');ArtistDetail.closeAllSongMenus()">＋ Thêm vào danh sách phát</button>
+                                        <button onclick="ArtistDetail.toggleLikeSong(@song.SongID, '@Html.Raw(JavaScriptEncoder.Default.Encode(song.Title))')" id="likeToggle-@song.SongID">♡ Thêm vào Bài hát đã thích</button>
+                                        @if (song.AlbumID.HasValue)
+                                        {
+                                            <button onclick="location.href='/Album/Detail/@song.AlbumID'">⊙ Chuyển đến album</button>
+                                        }
+                                        @{
+                                            var otherArtists = song.Artists.Where(a => a.ArtistID != Model.ArtistID).ToList();
+                                        }
+                                        @if (otherArtists.Any())
+                                        {
+                                            <div class="submenu-wrap">
+                                                <button class="submenu-trigger">👤 Chuyển tới nghệ sĩ ▸</button>
+                                                <div class="submenu">
+                                                    @foreach (var oa in otherArtists)
+                                                    {
+                                                        <button onclick="location.href='/Artist/Detail/@oa.ArtistID'">@oa.ArtistName</button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                        <button onclick="ArtistDetail.showCredits(@song.SongID, '@Html.Raw(JavaScriptEncoder.Default.Encode(song.Title))')">Xem thông tin ghi công</button>
+                                        <button onclick="ArtistDetail.shareSong(@song.SongID);ArtistDetail.closeAllSongMenus()">Chia sẻ</button>
+                                        <button class="report-song-btn" data-report-song-id="@song.SongID" data-report-song-title="@song.Title" onclick="ArtistDetail.closeAllSongMenus()">⚑ Báo cáo bài hát</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="duration">@($"{mins}:{secs:D2}")</div>
+                        </div>
+                    </div>
+                    index++;
+                }
+            }
+            else
+            {
+                <div class="empty-text">Nghệ sĩ này chưa có bài hát nào.</div>
+            }
+        </div>
+    </div>
+    <div class="section">
+        <h2>Danh sách đĩa nhạc</h2>
+        <div class="album-tabs" id="albumTabs">
+            <button class="active" data-tab="all">Bản phát hành nổi tiếng</button>
+            <button data-tab="album">Album</button>
+            <button data-tab="single_ep">Đĩa đơn và Đĩa mở rộng (EP)</button>
+        </div>
+        <div id="albumGrid" class="album-grid">
+            <div class="loading-text">Đang tải...</div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>Giới thiệu</h2>
+        <div class="about-section">
+            <div class="about-bg" style="background-image:@(string.IsNullOrEmpty(heroImage) ? "none" : $"url('{heroImage}')");"></div>
+            <div class="about-content">
+                <div class="about-listeners">@Model.MonthlyListeners.ToString("N0") người nghe hằng tháng</div>
+                <div class="about-bio">@bio</div>
+            </div>
+        </div>
+    </div>
+    <div class="report-overlay" id="creditsOverlay">
+        <div class="report-modal">
+            <h3>Thông tin ghi công</h3>
+            <p id="creditsSongTitle" style="color:#fff;font-weight:600;font-size:15px;"></p>
+            <div id="creditsList" style="display:flex;flex-direction:column;gap:8px;margin:12px 0 18px;"></div>
+            <div class="report-actions">
+                <button type="button" id="btnCreditsClose" class="report-btn-cancel">Đóng</button>
+            </div>
+        </div>
+    </div>
+    <div class="report-overlay" id="reportOverlay">
+        <div class="report-modal">
+            <h3>Báo cáo nghệ sĩ</h3>
+            <p>Vui lòng cho chúng tôi biết lý do bạn báo cáo <strong id="reportArtistName"></strong>.</p>
+            <div class="report-reasons" id="reportReasons">
+                <label><input type="radio" name="reportReason" value="Nội dung không phù hợp"> Nội dung không phù hợp</label>
+                <label><input type="radio" name="reportReason" value="Vi phạm bản quyền"> Vi phạm bản quyền</label>
+                <label><input type="radio" name="reportReason" value="Giả mạo nghệ sĩ"> Giả mạo nghệ sĩ</label>
+                <label><input type="radio" name="reportReason" value="Spam hoặc lừa đảo"> Spam hoặc lừa đảo</label>
+                <label><input type="radio" name="reportReason" value="Khác"> Khác</label>
+            </div>
+            <textarea id="reportDetail" placeholder="Mô tả chi tiết (không bắt buộc)..." rows="3"></textarea>
+            <div class="report-actions">
+                <button type="button" id="btnReportCancel" class="report-btn-cancel">Hủy</button>
+                <button type="button" id="btnReportSubmit" class="report-btn-submit">Gửi báo cáo</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/artist.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script>
+        window.ARTIST_PAGE_ID = @Model.ArtistID;
+        window.SONGS_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.PopularSongs.ToDictionary(
+                    s => s.SongID,
+                    s => new { title = s.Title, artists = s.Artists.Select(a => new { id = a.ArtistID, name = a.ArtistName }) }
+                    )
+                    ));
+    </script>
+    <script src="~/js/artist.js"></script>
+}
