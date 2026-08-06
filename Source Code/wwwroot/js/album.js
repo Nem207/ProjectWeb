@@ -29,6 +29,7 @@
                 if (liked) likedSongIdsCache.add(songId);
                 else likedSongIdsCache.delete(songId);
                 refreshLikeButton(songId);
+                if (window.refreshSongAddButtons) window.refreshSongAddButtons(songId);
                 Toast.success(liked ? 'Đã thêm vào Bài hát đã thích.' : 'Đã xóa khỏi Bài hát đã thích.');
             })
             .catch(err => console.error('Không thể cập nhật bài hát yêu thích.', err));
@@ -250,7 +251,9 @@
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const songId = Number(this.dataset.songId);
-                if (window.PlaylistPicker) {
+                if (window.handleSongAddButtonClick) {
+                    window.handleSongAddButtonClick(songId);
+                } else if (window.PlaylistPicker) {
                     window.PlaylistPicker.open(songId);
                 }
             });
@@ -300,7 +303,9 @@
                 syncScrollLock();
             });
         });
-        loadLikedSongIds();
+        loadLikedSongIds().then(() => {
+            syncRowAddButtons();
+        });
     }
     function bindViewToggle() {
         const root = document.getElementById('viewAlbumDetail');
@@ -327,6 +332,13 @@
         btnList.addEventListener('click', () => { applyMode('list'); menu.classList.remove('open'); syncScrollLock(); });
         const savedMode = localStorage.getItem('albumViewMode:' + albumId) || 'list';
         applyMode(savedMode);
+    }
+    function syncRowAddButtons() {
+        if (!window.IS_AUTHENTICATED || !window.refreshSongAddButtons) return;
+        document.querySelectorAll('.row-add-btn').forEach(btn => {
+            const songId = Number(btn.dataset.songId);
+            if (songId) window.refreshSongAddButtons(songId);
+        });
     }
     function init() {
         const root = document.getElementById('viewAlbumDetail');

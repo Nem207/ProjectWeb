@@ -195,6 +195,9 @@
                 console.error('Không thể bỏ theo dõi nghệ sĩ.', err);
             }
         }
+        if (window.Player && typeof Player.notifyArtistBlocked === 'function') {
+            Player.notifyArtistBlocked(artistId, isBlockedCache);
+        }
         refreshBlockUI();
         refreshFollowButton();
         Toast.success(wasBlocked ? `Đã bỏ chặn ${artistName}.` : `Sẽ không phát nhạc từ ${artistName} nữa.`);
@@ -437,7 +440,9 @@
     }
     function addToPlaylist(songId, songTitle) {
         closeAllSongMenus();
-        if (window.PlaylistPicker) {
+        if (window.handleSongAddButtonClick) {
+            window.handleSongAddButtonClick(songId);
+        } else if (window.PlaylistPicker) {
             window.PlaylistPicker.open(songId);
         }
     }
@@ -469,6 +474,7 @@
                 if (liked) likedSongIdsCache.add(songId);
                 else likedSongIdsCache.delete(songId);
                 refreshLikeButton(songId);
+                if (window.refreshSongAddButtons) window.refreshSongAddButtons(songId);
                 Toast.success(liked ? 'Đã thêm vào Bài hát đã thích.' : 'Đã xóa khỏi Bài hát đã thích.');
             })
             .catch(err => {
@@ -504,6 +510,13 @@
             Toast.info(url);
         }
     }
+    function syncRowAddButtons() {
+        if (!window.IS_AUTHENTICATED || !window.refreshSongAddButtons) return;
+        document.querySelectorAll('#viewArtistDetail .row-add-btn').forEach(btn => {
+            const songId = Number(btn.dataset.songId);
+            if (songId) window.refreshSongAddButtons(songId);
+        });
+    }
     function init() {
         const root = document.getElementById('viewArtistDetail');
         if (!root) return;
@@ -522,6 +535,7 @@
         refreshFollowButton();
         refreshBlockState().then(refreshBlockUI);
         loadLikedSongIds();
+        syncRowAddButtons();
         loadAlbums();
         updatePlaybackUI();
         if (window.Player && typeof Player.onChange === 'function') {

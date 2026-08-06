@@ -104,12 +104,15 @@ const Playlist = {
                 const imgHtml = isFavorites
                     ? `<div class="library-item-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#450af5,#c4efd9);font-size:18px;">💚</div>`
                     : `<img class="library-item-img" src="${p.coverImage || DEFAULT_COVER}" onerror="this.onerror=null;this.src='${DEFAULT_COVER}'" alt="${escapeHtml(p.playlistName)}">`;
+                const metaHtml = isFavorites
+                    ? `${p.songCount} bài hát`
+                    : `Playlist • ${p.songCount} bài hát`;
                 return `
                 <a class="library-item" data-type="playlist" href="/Playlist/Detail/${p.playlistID}">
                     ${imgHtml}
                     <div class="library-item-info">
                         <div class="library-item-name">${escapeHtml(p.playlistName)}</div>
-                        <div class="library-item-meta">Playlist • ${p.songCount} bài hát</div>
+                        <div class="library-item-meta">${metaHtml}</div>
                     </div>
                 </a>`;
             }).join("");
@@ -159,7 +162,14 @@ const Playlist = {
     renderDetail(data) {
         const p = data.playlist;
         this.currentPlaylistData = p;
-        document.getElementById("plCoverImg").src = p.coverImage || DEFAULT_COVER;
+        const isFavoritePlaylist = p.playlistName === "Bài hát yêu thích";
+        const coverImg = document.getElementById("plCoverImg");
+        const coverFavorites = document.getElementById("plCoverFavorites");
+        if (coverImg) coverImg.style.display = isFavoritePlaylist ? "none" : "";
+        if (coverFavorites) coverFavorites.style.display = isFavoritePlaylist ? "flex" : "none";
+        if (!isFavoritePlaylist && coverImg) coverImg.src = p.coverImage || DEFAULT_COVER;
+        const typeEl = document.getElementById("plType");
+        if (typeEl) typeEl.style.display = isFavoritePlaylist ? "none" : "";
         document.getElementById("plName").innerText = p.playlistName || "Playlist của tôi";
         const descEl = document.getElementById("plDescription");
         if (p.description && p.description.trim()) {
@@ -176,7 +186,6 @@ const Playlist = {
         document.getElementById("plCreatedAt").innerText = p.createdAt
             ? new Date(p.createdAt).toLocaleDateString("vi-VN")
             : "";
-        const isFavoritePlaylist = p.playlistName === "Bài hát yêu thích";
         const editBtn = document.getElementById("btnEditPlaylist");
         const deleteBtn = document.getElementById("btnDeletePlaylist");
         if (editBtn) editBtn.style.display = isFavoritePlaylist ? "none" : "";
@@ -446,6 +455,10 @@ const Playlist = {
             }
             const detailRes = await fetch(`/api/playlists/${this.currentPlaylistId}`);
             const data = await detailRes.json();
+            if (data.playlist.playlistName === "Bài hát yêu thích" && data.playlist.songCount === 0) {
+                window.history.back();
+                return;
+            }
             this.renderDetail(data);
             await this.loadSidebarLibrary();
         } catch (err) {
@@ -466,6 +479,10 @@ const Playlist = {
             if (!res.ok) throw new Error("Xoá bài hát thất bại");
             const detailRes = await fetch(`/api/playlists/${this.currentPlaylistId}`);
             const data = await detailRes.json();
+            if (data.playlist.playlistName === "Bài hát yêu thích" && data.playlist.songCount === 0) {
+                window.history.back();
+                return;
+            }
             this.renderDetail(data);
             await this.loadSidebarLibrary();
         } catch (err) {
@@ -497,18 +514,24 @@ const PlaylistPicker = {
         if (!overlay || !list) return;
         list.innerHTML = `<div class="pl-empty">Đang tải...</div>`;
         overlay.classList.add("open");
+        const searchInput = document.getElementById("plPickerSearchInput");
+        if (searchInput) {
+            searchInput.value = "";
+            searchInput.oninput = () => PlaylistPicker._filterList(searchInput.value);
+        }
         try {
             const [plRes, containRes] = await Promise.all([
                 fetch("/api/playlists"),
                 isBulk ? Promise.resolve(null) : fetch(`/api/playlists/containing/${songId}`)
             ]);
             const playlists = plRes.ok ? await plRes.json() : [];
+            this._existingNames = playlists.map(p => p.playlistName);
             const containingIds = (!isBulk && containRes.ok) ? await containRes.json() : [];
             const favPlaylist = playlists.find(p => p.playlistName === "Bài hát yêu thích");
             const others = playlists.filter(p => p.playlistName !== "Bài hát yêu thích");
             this.favPlaylistId = favPlaylist ? favPlaylist.playlistID : null;
             const favAdded = favPlaylist ? containingIds.includes(favPlaylist.playlistID) : false;
-            list.innerHTML = this._renderRow({
+            list.innerHTML = this._renderCreateRow() + this._renderRow({
                 fav: true,
                 cover: null,
                 name: "Bài hát yêu thích",
@@ -520,6 +543,10 @@ const PlaylistPicker = {
                 name: p.playlistName,
                 added: containingIds.includes(p.playlistID)
             })).join("");
+            const createBtn = list.querySelector(".pl-picker-create");
+            if (createBtn) {
+                createBtn.addEventListener("click", () => PlaylistPicker.quickCreate());
+            }
             list.querySelectorAll(".pl-picker-item").forEach(btn => {
                 btn.addEventListener("click", () => {
                     const isAdded = isBulk ? false : btn.classList.contains("pl-picker-added");
@@ -535,6 +562,101 @@ const PlaylistPicker = {
         } catch (err) {
             console.error(err);
             list.innerHTML = `<div class="pl-empty">Không thể tải danh sách playlist.</div>`;
+        }
+    },
+    _filterList(query) {
+        const list = document.getElementById("addToPlaylistList");
+        if (!list) return;
+        const q = (query || "").trim().toLowerCase();
+        let anyVisible = false;
+        list.querySelectorAll(".pl-picker-item").forEach(item => {
+            if (item.classList.contains("pl-picker-create")) return;
+            const nameEl = item.querySelector(".pl-picker-name");
+            const name = nameEl ? nameEl.textContent.toLowerCase() : "";
+            const match = !q || name.includes(q);
+            item.style.display = match ? "" : "none";
+            if (match) anyVisible = true;
+        });
+        let emptyMsg = list.querySelector(".pl-picker-search-empty");
+        if (!anyVisible && q) {
+            if (!emptyMsg) {
+                emptyMsg = document.createElement("div");
+                emptyMsg.className = "pl-empty pl-picker-search-empty";
+                emptyMsg.textContent = "Không tìm thấy playlist nào.";
+                list.appendChild(emptyMsg);
+            }
+        } else if (emptyMsg) {
+            emptyMsg.remove();
+        }
+    },
+    _renderCreateRow() {
+        return `
+            <button class="pl-picker-item pl-picker-create" type="button">
+                <span class="pl-picker-cover pl-picker-cover-create" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/>
+                    </svg>
+                </span>
+                <span class="pl-picker-name">Tạo playlist mới</span>
+            </button>`;
+    },
+    _uniqueName(baseName) {
+        const existing = this._existingNames || [];
+        if (!existing.includes(baseName)) return baseName;
+        let n = 2;
+        while (existing.includes(`${baseName} (${n})`)) n++;
+        return `${baseName} (${n})`;
+    },
+    async quickCreate() {
+        try {
+            const isBulk = Array.isArray(this.currentSongId);
+            let baseName = "Playlist của tôi";
+            if (!isBulk && this.currentSongId) {
+                try {
+                    const songRes = await fetch(`/api/musicplayer/song/${this.currentSongId}`);
+                    if (songRes.ok) {
+                        const songData = await songRes.json();
+                        if (songData && songData.title) baseName = songData.title;
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            const playlistName = this._uniqueName(baseName);
+            const res = await fetch("/api/playlists", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    playlistName: playlistName,
+                    description: "",
+                    coverImage: "",
+                    isPublic: true
+                })
+            });
+            if (!res.ok) throw new Error("Tạo playlist thất bại");
+            const newPlaylistId = await res.json();
+            if (this._existingNames) this._existingNames.push(playlistName);
+            if (this.currentSongId) {
+                const songIds = Array.isArray(this.currentSongId) ? this.currentSongId : [this.currentSongId];
+                await Promise.all(songIds.map(songId =>
+                    fetch(`/api/playlists/${newPlaylistId}/songs/${songId}`, { method: "POST" })
+                ));
+            }
+            if (typeof Toast !== "undefined" && Toast.show) {
+                Toast.show(`Đã tạo playlist "${playlistName}" và thêm bài hát vào đó`);
+            }
+            if (typeof Playlist !== "undefined" && Playlist.loadSidebarLibrary) {
+                await Playlist.loadSidebarLibrary();
+            }
+            if (!isBulk && window.refreshSongAddButtons) {
+                window.refreshSongAddButtons(this.currentSongId);
+            }
+            await this.open(this.currentSongId);
+        } catch (err) {
+            console.error(err);
+            if (typeof Toast !== "undefined" && Toast.show) {
+                Toast.show("Không thể tạo playlist. Vui lòng thử lại.", "error");
+            }
         }
     },
     _renderRow({ fav, playlistId, cover, name, added }) {
@@ -556,6 +678,8 @@ const PlaylistPicker = {
     close() {
         const overlay = document.getElementById("modalAddToPlaylist");
         if (overlay) overlay.classList.remove("open");
+        const searchInput = document.getElementById("plPickerSearchInput");
+        if (searchInput) searchInput.value = "";
     },
     async toggleFavorites(btnEl, isAdded) {
         if (!this.currentSongId) return;
@@ -608,6 +732,9 @@ const PlaylistPicker = {
                     : `Đã thêm ${label} vào "${playlistName}".`);
             }
             await Playlist.loadSidebarLibrary();
+            if (!Array.isArray(this.currentSongId) && window.refreshSongAddButtons) {
+                window.refreshSongAddButtons(this.currentSongId);
+            }
         } catch (err) {
             console.error(err);
             if (typeof Toast !== "undefined" && Toast.show) {
@@ -637,7 +764,9 @@ const LikedSongs = {
         if (this.favPlaylistId) return this.favPlaylistId;
         const res = await fetch("/api/playlists/favorites", { method: "POST" });
         if (!res.ok) throw new Error("Không thể tạo playlist Bài hát yêu thích");
-        this.favPlaylistId = await res.json();
+        const id = await res.json();
+        if (!id || typeof id !== "number") throw new Error("Không thể tạo playlist Bài hát yêu thích");
+        this.favPlaylistId = id;
         return this.favPlaylistId;
     },
     async loadLikedIds() {
@@ -678,10 +807,11 @@ const LikedSongs = {
         const favPlaylistId = wasLiked
             ? await this._peekFavPlaylistId()
             : await this._ensureFavPlaylistId();
+        if (!favPlaylistId) throw new Error("Không thể xác định playlist yêu thích.");
         const toggleRes = await fetch(`/api/playlists/${favPlaylistId}/songs/${songId}`, {
             method: wasLiked ? "DELETE" : "POST"
         });
-        if (!toggleRes.ok) throw new Error("Không thể cập nhật Bài hát đã thích");
+        if (!toggleRes.ok) throw new Error("Không thể cập nhật Bài hát đã thích.");
         if (this.likedIdsCache) {
             if (wasLiked) this.likedIdsCache.delete(songId);
             else this.likedIdsCache.add(songId);
