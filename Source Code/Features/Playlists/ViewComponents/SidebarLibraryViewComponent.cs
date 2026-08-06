@@ -23,19 +23,6 @@ namespace SpotifyClone.Features.Playlists.ViewComponents
             if (_currentUser.IsAuthenticated && _currentUser.UserId is int userId)
             {
                 var favoritesName = SpotifyClone.Features.Playlist.Controllers.Api.PlaylistApiController.FavoritesPlaylistName;
-                var favoritesExists = await _context.Playlists
-                    .AnyAsync(p => p.UserID == userId && p.PlaylistName == favoritesName);
-                if (!favoritesExists)
-                {
-                    _context.Playlists.Add(new SpotifyClone.Models.Playlist
-                    {
-                        UserID = userId,
-                        PlaylistName = favoritesName,
-                        IsPublic = false,
-                        CreatedAt = DateTime.Now
-                    });
-                    await _context.SaveChangesAsync();
-                }
                 vm.Playlists = await _context.Playlists
                     .Where(p => p.UserID == userId)
                     .OrderByDescending(p => p.PlaylistName == favoritesName)
@@ -47,6 +34,7 @@ namespace SpotifyClone.Features.Playlists.ViewComponents
                         CoverImage = p.CoverImage,
                         SongCount = p.PlaylistSongs.Count(ps => ps.Song.Status == SpotifyClone.Models.SongStatus.Approved)
                     })
+                    .Where(p => p.PlaylistName != favoritesName || p.SongCount > 0)
                     .ToListAsync();
                 vm.FollowedArtists = await _artistService.GetFollowedArtistsAsync(userId);
             }

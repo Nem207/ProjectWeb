@@ -47,6 +47,7 @@ public class PlaylistApiController : ControllerBase
                 CreatedAt = p.CreatedAt,
                 SongCount = p.PlaylistSongs.Count(ps => ps.Song.Status == SongStatus.Approved)
             })
+            .Where(p => p.PlaylistName != FavoritesPlaylistName || p.SongCount > 0)
             .ToListAsync();
         return Ok(playlists);
     }
