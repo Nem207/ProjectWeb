@@ -29,12 +29,10 @@ namespace SpotifyClone.Tests.Features.Queue
             await context.SaveChangesAsync();
             var service = new QueueService(context);
             int userId = 1;
-
             
             var first = await service.AddToQueueAsync(userId, 1);
             var second = await service.AddToQueueAsync(userId, 2);
             var third = await service.AddToQueueAsync(userId, 3);
-
             
             Assert.NotNull(first);
             Assert.NotNull(second);
@@ -115,9 +113,7 @@ namespace SpotifyClone.Tests.Features.Queue
             await service.AddToQueueAsync(userId: 1, songId: 2);
             await service.AddToQueueAsync(userId: 2, songId: 1);
 
-            
             await service.ClearQueueAsync(userId: 1);
-
             
             var user1Queue = await service.GetQueueAsync(userId: 1);
             var user2Queue = await service.GetQueueAsync(userId: 2);
