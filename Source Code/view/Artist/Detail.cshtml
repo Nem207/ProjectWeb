@@ -69,7 +69,7 @@
                         <div class="plays">@song.TotalPlays.ToString("N0")</div>
                         <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;" onclick="event.stopPropagation();">
                             <div class="row-actions">
-                                <button title="Thêm vào playlist" onclick="ArtistDetail.addToPlaylist(@song.SongID, '@Html.Raw(JavaScriptEncoder.Default.Encode(song.Title))')">＋</button>
+                                <button class="row-add-btn" data-song-id="@song.SongID" title="Thêm vào playlist" onclick="ArtistDetail.addToPlaylist(@song.SongID, '@Html.Raw(JavaScriptEncoder.Default.Encode(song.Title))')">＋</button>
                                 <div class="song-more-wrap" style="position:relative;">
                                     <button title="Tuỳ chọn khác" onclick="ArtistDetail.toggleSongMenu(event, @song.SongID)">•••</button>
                                     <div class="more-menu song-menu" id="songMenu-@song.SongID">
